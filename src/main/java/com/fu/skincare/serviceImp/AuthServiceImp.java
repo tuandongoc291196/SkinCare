@@ -71,7 +71,7 @@ public class AuthServiceImp implements AuthService {
         .phoneNumber(registerCustomerDTO.getPhoneNumber())
         .password(passwordEncoder.encode(registerCustomerDTO.getPassword()))
         .createAt(Utils.formatVNDatetimeNow())
-        .status(Status.ACTIVED)
+        .status(Status.ACTIVATED)
         .role(role)
         .build();
     Account accountSaved = accountRepository.save(account);
@@ -94,7 +94,7 @@ public class AuthServiceImp implements AuthService {
         .phoneNumber(registerDoctorDTO.getPhoneNumber())
         .password(passwordEncoder.encode(registerDoctorDTO.getPassword()))
         .createAt(Utils.formatVNDatetimeNow())
-        .status(Status.ACTIVED)
+        .status(Status.ACTIVATED)
         .role(role)
         .build();
     Account accountSaved = accountRepository.save(account);
