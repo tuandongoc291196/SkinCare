@@ -18,8 +18,9 @@ import java.util.Optional;
 @Builder
 public class ApplicationUserService implements UserDetailsService {
     private final AccountRepository accountRepository;
+
     @Override
-    public UserDetails loadUserByUsername(String email){
+    public UserDetails loadUserByUsername(String email) {
         Optional<Account> account = accountRepository.findAccountByEmail(email);
         if (!account.isPresent()) {
             throw new IllegalStateException("Employee Not Found");
