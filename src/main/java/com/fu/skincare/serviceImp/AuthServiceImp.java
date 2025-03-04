@@ -21,7 +21,7 @@ import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.RoleRepository;
 import com.fu.skincare.request.auth.LoginRequestDTO;
 import com.fu.skincare.request.auth.RegisterCustomerDTO;
-import com.fu.skincare.request.auth.RegisterDoctorDTO;
+import com.fu.skincare.request.auth.RegisterStaffDTO;
 import com.fu.skincare.response.account.LoginReponseDTO;
 import com.fu.skincare.response.account.RegisterResponse;
 import com.fu.skincare.service.AuthService;
@@ -83,16 +83,16 @@ public class AuthServiceImp implements AuthService {
   }
 
   @Override
-  public RegisterResponse registerDoctor(RegisterDoctorDTO registerDoctorDTO) {
-    Role role = roleRepository.findByName(RoleName.ROLE_DOCTOR)
+  public RegisterResponse registerStaff(RegisterStaffDTO registerStaffDTO) {
+    Role role = roleRepository.findByName(RoleName.ROLE_STAFF)
         .orElseThrow(() -> new ErrorException(RoleErrorMessage.ROLE_NOT_EXIST));
 
     Account account = Account.builder()
-        .address(registerDoctorDTO.getAddress())
-        .email(registerDoctorDTO.getEmail())
-        .name(registerDoctorDTO.getName())
-        .phoneNumber(registerDoctorDTO.getPhoneNumber())
-        .password(passwordEncoder.encode(registerDoctorDTO.getPassword()))
+        .address(registerStaffDTO.getAddress())
+        .email(registerStaffDTO.getEmail())
+        .name(registerStaffDTO.getName())
+        .phoneNumber(registerStaffDTO.getPhoneNumber())
+        .password(passwordEncoder.encode(registerStaffDTO.getPassword()))
         .createAt(Utils.formatVNDatetimeNow())
         .status(Status.ACTIVATED)
         .role(role)

@@ -2,7 +2,7 @@ package com.fu.skincare.service;
 
 import com.fu.skincare.request.auth.LoginRequestDTO;
 import com.fu.skincare.request.auth.RegisterCustomerDTO;
-import com.fu.skincare.request.auth.RegisterDoctorDTO;
+import com.fu.skincare.request.auth.RegisterStaffDTO;
 import com.fu.skincare.response.account.LoginReponseDTO;
 import com.fu.skincare.response.account.RegisterResponse;
 
@@ -11,5 +11,5 @@ public interface AuthService {
 
   public RegisterResponse registerCustomer(RegisterCustomerDTO registerCustomerDTO);
 
-  public RegisterResponse registerDoctor(RegisterDoctorDTO registerDoctorDTO);
+  public RegisterResponse registerStaff(RegisterStaffDTO registerStaffDTO);
 }

@@ -15,7 +15,7 @@ import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.account.AccountSuccessMessage;
 import com.fu.skincare.request.auth.LoginRequestDTO;
 import com.fu.skincare.request.auth.RegisterCustomerDTO;
-import com.fu.skincare.request.auth.RegisterDoctorDTO;
+import com.fu.skincare.request.auth.RegisterStaffDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.account.LoginReponseDTO;
 import com.fu.skincare.response.account.RegisterResponse;
@@ -52,12 +52,12 @@ public class AuthController {
     return ResponseEntity.ok().body(responseDTO);
   }
 
-  @PostMapping("/register/doctor")
+  @PostMapping("/register/staff")
   @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
-  public ResponseEntity<?> registerDoctor(@Validated @RequestBody RegisterDoctorDTO registerDTO) {
+  public ResponseEntity<?> registerStaff(@Validated @RequestBody RegisterStaffDTO registerDTO) {
     ResponseDTO<RegisterResponse> responseDTO = new ResponseDTO<>();
-    RegisterResponse regsiterDoctorReponse = authService.registerDoctor(registerDTO);
-    responseDTO.setData(regsiterDoctorReponse);
+    RegisterResponse regsiterStaffReponse = authService.registerStaff(registerDTO);
+    responseDTO.setData(regsiterStaffReponse);
     responseDTO.setMessage(AccountSuccessMessage.CREATE_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);

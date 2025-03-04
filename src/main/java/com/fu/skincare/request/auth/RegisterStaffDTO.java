@@ -21,7 +21,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
-public class RegisterDoctorDTO {
+public class RegisterStaffDTO {
   @Email(message = ValidationMessage.EMAIL_INVALID_MESSAGE)
   private String email;
   private String name;
