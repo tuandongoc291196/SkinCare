@@ -37,7 +37,7 @@ public class Product {
   private String description;
   @Column(columnDefinition = "TEXT")
   private String image;
-  private String price;
+  private int price;
   private int quantity;
   private String status;
   private String createdAt;

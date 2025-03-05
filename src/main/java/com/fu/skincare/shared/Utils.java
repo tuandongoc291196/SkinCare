@@ -15,7 +15,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 
 import com.fu.skincare.entity.Account;
+import com.fu.skincare.entity.Product;
 import com.fu.skincare.jwt.JwtConfig;
+import com.fu.skincare.response.brand.BrandResponse;
+import com.fu.skincare.response.category.CategoryResponse;
+import com.fu.skincare.response.product.ProductResponse;
 
 import io.jsonwebtoken.Jwts;
 import lombok.RequiredArgsConstructor;
@@ -54,5 +58,14 @@ public class Utils {
     return inputList.stream()
         .map(input -> modelMapper.map(input, outputClass))
         .collect(Collectors.toList());
+  }
+
+  public static ProductResponse convertProduct(Product product) {
+    ProductResponse response = modelMapper.map(product, ProductResponse.class);
+    response.setBrand(modelMapper.map(product.getBrand(), BrandResponse.class));
+    response.setCategory(modelMapper.map(product.getCategory(), CategoryResponse.class));
+    response.setCreatedBy(product.getCreatedBy().getName());
+    return response;
+
   }
 }
