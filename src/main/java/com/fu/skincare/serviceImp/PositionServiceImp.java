@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.position.PositionErrorMessage;
 import com.fu.skincare.entity.Position;
+import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.PositionRepository;
 import com.fu.skincare.request.position.CreatePositionRequest;
@@ -42,6 +43,9 @@ public class PositionServiceImp implements PositionService {
   @Override
   public List<PositionResponse> getListPosition() {
     List<Position> positions = positionRepository.findByStatus(Status.ACTIVATED);
+    if (positions.isEmpty()) {
+      throw new EmptyException(PositionErrorMessage.LIST_POSITION_EMPTY);
+    }
     return Utils.mapList(positions, PositionResponse.class);
   }
 

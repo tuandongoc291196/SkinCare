@@ -1,6 +1,4 @@
-package com.fu.skincare.request.position;
-
-import javax.validation.constraints.NotBlank;
+package com.fu.skincare.response.category;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +13,10 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CreatePositionRequest {
-  @NotBlank
+public class CategoryResponse {
+  private int id;
   private String name;
+  private String description;
+  private String createdAt;
+  private String status;
 }

@@ -3,6 +3,7 @@ package com.fu.skincare.entity;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -32,6 +33,7 @@ public class Category {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String name;
+  @Column(columnDefinition = "text")
   private String description;
   private String createdAt;
   private String status;
