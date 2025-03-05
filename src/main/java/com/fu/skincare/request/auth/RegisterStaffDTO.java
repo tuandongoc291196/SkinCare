@@ -31,4 +31,5 @@ public class RegisterStaffDTO {
   private String address;
   @Size(min = ValidationSize.PASSWORD_MIN, max = ValidationSize.PASSWORD_MAX, message = ValidationMessage.PASSWORD_INVALID_MESSAGE)
   private String password;
+  private int positionId;
 }

@@ -19,6 +19,7 @@ import com.fu.skincare.request.auth.RegisterStaffDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.account.LoginReponseDTO;
 import com.fu.skincare.response.account.RegisterResponse;
+import com.fu.skincare.response.account.RegisterStaffResponseDTO;
 import com.fu.skincare.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
@@ -55,8 +56,8 @@ public class AuthController {
   @PostMapping("/register/staff")
   @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
   public ResponseEntity<?> registerStaff(@Validated @RequestBody RegisterStaffDTO registerDTO) {
-    ResponseDTO<RegisterResponse> responseDTO = new ResponseDTO<>();
-    RegisterResponse regsiterStaffReponse = authService.registerStaff(registerDTO);
+    ResponseDTO<RegisterStaffResponseDTO> responseDTO = new ResponseDTO<>();
+    RegisterStaffResponseDTO regsiterStaffReponse = authService.registerStaff(registerDTO);
     responseDTO.setData(regsiterStaffReponse);
     responseDTO.setMessage(AccountSuccessMessage.CREATE_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);

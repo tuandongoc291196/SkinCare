@@ -28,34 +28,35 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Account {
+public class Staff {
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private int id;
+  private String name;
+  private String status;
+  private String createdAt;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
-    private String email;
-    private String name;
-    private String phoneNumber;
-    private String address;
-    @JsonIgnore
-    private String password;
-    private String status;
-    private String createAt;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "accountId")
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  private Account account;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "roleId")
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    private Role role;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "positionId")
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  private Position position;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    @JsonIgnore
-    private Collection<Staff> staffs;
+  @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  @JsonIgnore
+  private Collection<Product> products;
 }

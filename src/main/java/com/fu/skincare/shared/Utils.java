@@ -5,9 +5,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 
@@ -22,6 +25,9 @@ import lombok.experimental.FieldDefaults;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true)
 public class Utils {
+
+  private static final ModelMapper modelMapper = new ModelMapper();
+
   public static String formatVNDatetimeNow() {
     ZoneId vietnamZoneId = ZoneId.of("Asia/Ho_Chi_Minh");
     DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -39,5 +45,14 @@ public class Utils {
         .setExpiration(java.sql.Date.valueOf(LocalDate.now().plusDays(jwtConfig.getTokenExpirationAfterDays())))
         .signWith(secretKey).compact();
     return token;
-  };
+  }
+
+  public static <T, R> List<R> mapList(List<T> inputList, Class<R> outputClass) {
+    if (inputList == null) {
+      throw new IllegalArgumentException("Input list cannot be null");
+    }
+    return inputList.stream()
+        .map(input -> modelMapper.map(input, outputClass))
+        .collect(Collectors.toList());
+  }
 }

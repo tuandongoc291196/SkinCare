@@ -14,18 +14,24 @@ import org.springframework.stereotype.Service;
 import com.fu.skincare.constants.RoleName;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.account.AccountErrorMessage;
+import com.fu.skincare.constants.message.position.PositionErrorMessage;
 import com.fu.skincare.constants.message.role.RoleErrorMessage;
 import com.fu.skincare.entity.Account;
+import com.fu.skincare.entity.Position;
 import com.fu.skincare.entity.Role;
+import com.fu.skincare.entity.Staff;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.jwt.JwtConfig;
 import com.fu.skincare.repository.AccountRepository;
+import com.fu.skincare.repository.PositionRepository;
 import com.fu.skincare.repository.RoleRepository;
+import com.fu.skincare.repository.StaffRepository;
 import com.fu.skincare.request.auth.LoginRequestDTO;
 import com.fu.skincare.request.auth.RegisterCustomerDTO;
 import com.fu.skincare.request.auth.RegisterStaffDTO;
 import com.fu.skincare.response.account.LoginReponseDTO;
 import com.fu.skincare.response.account.RegisterResponse;
+import com.fu.skincare.response.account.RegisterStaffResponseDTO;
 import com.fu.skincare.service.AuthService;
 import com.fu.skincare.shared.Utils;
 
@@ -42,6 +48,8 @@ public class AuthServiceImp implements AuthService {
   private final JwtConfig jwtConfig;
   private final PasswordEncoder passwordEncoder;
   private final ModelMapper modelMapper;
+  private final PositionRepository positionRepository;
+  private final StaffRepository staffRepository;
 
   @Override
   public LoginReponseDTO login(LoginRequestDTO loginRequestDTO) {
@@ -91,11 +99,16 @@ public class AuthServiceImp implements AuthService {
   }
 
   @Override
-  public RegisterResponse registerStaff(RegisterStaffDTO registerStaffDTO) {
+  public RegisterStaffResponseDTO registerStaff(RegisterStaffDTO registerStaffDTO) {
     Role role = roleRepository.findByName(RoleName.ROLE_STAFF)
         .orElseThrow(() -> new ErrorException(RoleErrorMessage.ROLE_NOT_EXIST));
 
     Optional<Account> checkAccountExist = accountRepository.findAccountByEmail(registerStaffDTO.getEmail());
+    Optional<Position> position = positionRepository.findById(registerStaffDTO.getPositionId());
+
+    if (!position.isPresent()) {
+      throw new ErrorException(PositionErrorMessage.POSITION_NOT_EXIST);
+    }
 
     if (checkAccountExist.isPresent()) {
       throw new ErrorException(AccountErrorMessage.EXIST_EMAIL_ACCOUNT);
@@ -113,9 +126,20 @@ public class AuthServiceImp implements AuthService {
         .build();
     Account accountSaved = accountRepository.save(account);
 
-    RegisterResponse registerResponse = modelMapper.map(accountSaved, RegisterResponse.class);
+    Staff staff = Staff.builder()
+        .account(accountSaved)
+        .createdAt(Utils.formatVNDatetimeNow())
+        .name(registerStaffDTO.getName())
+        .position(position.get())
+        .status(Status.ACTIVATED)
+        .build();
+
+    staffRepository.save(staff);
+
+    RegisterStaffResponseDTO registerResponse = modelMapper.map(accountSaved, RegisterStaffResponseDTO.class);
     registerResponse.setAccountId(accountSaved.getId());
     registerResponse.setRoleName(accountSaved.getRole().getName());
+    registerResponse.setPositionName(position.get().getName());
     return registerResponse;
   }
 
