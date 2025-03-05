@@ -1,5 +1,7 @@
 package com.fu.skincare.serviceImp;
 
+import java.util.Optional;
+
 import javax.crypto.SecretKey;
 
 import org.modelmapper.ModelMapper;
@@ -64,6 +66,12 @@ public class AuthServiceImp implements AuthService {
     Role role = roleRepository.findByName(RoleName.ROLE_USER)
         .orElseThrow(() -> new ErrorException(RoleErrorMessage.ROLE_NOT_EXIST));
 
+    Optional<Account> checkAccountExist = accountRepository.findAccountByEmail(registerCustomerDTO.getEmail());
+
+    if (checkAccountExist.isPresent()) {
+      throw new ErrorException(AccountErrorMessage.EXIST_EMAIL_ACCOUNT);
+    }
+
     Account account = Account.builder()
         .address(registerCustomerDTO.getAddress())
         .name(registerCustomerDTO.getName())
@@ -86,6 +94,12 @@ public class AuthServiceImp implements AuthService {
   public RegisterResponse registerStaff(RegisterStaffDTO registerStaffDTO) {
     Role role = roleRepository.findByName(RoleName.ROLE_STAFF)
         .orElseThrow(() -> new ErrorException(RoleErrorMessage.ROLE_NOT_EXIST));
+
+    Optional<Account> checkAccountExist = accountRepository.findAccountByEmail(registerStaffDTO.getEmail());
+
+    if (checkAccountExist.isPresent()) {
+      throw new ErrorException(AccountErrorMessage.EXIST_EMAIL_ACCOUNT);
+    }
 
     Account account = Account.builder()
         .address(registerStaffDTO.getAddress())
