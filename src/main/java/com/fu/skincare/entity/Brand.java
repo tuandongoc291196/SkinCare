@@ -33,6 +33,7 @@ public class Brand {
   private String name;
   private String email;
   private String phoneNumber;
+  private String createdAt;
   private String status;
 
   @OneToMany(mappedBy = "brand", cascade = CascadeType.ALL)

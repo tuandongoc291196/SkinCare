@@ -1,5 +1,6 @@
 package com.fu.skincare.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -32,7 +33,9 @@ public class Product {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String name;
+  @Column(columnDefinition = "TEXT")
   private String description;
+  @Column(columnDefinition = "TEXT")
   private String image;
   private String price;
   private int quantity;
