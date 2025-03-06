@@ -10,5 +10,6 @@ public final class ValidationMessage {
   public static final String START_DATE_AFTER_END_DATE = "Start Date cannot be after End Date.";
   public static final String NOT_BEFORE_CURRENT_DATE = "Date must be after Current Date.";
   public static final String PROMOTION_LESS_THEN_100 = "Promotion value must be less than 100";
+  public static final String ADDRESS_NOT_NULL = "Address cannot be null.";
 
 }

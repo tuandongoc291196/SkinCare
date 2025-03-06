@@ -3,7 +3,6 @@ package com.fu.skincare.entity;
 import java.util.Collection;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,50 +28,30 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@ToString
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Builder
-public class Product {
-
+public class Bill {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
-  private String name;
-  @Column(columnDefinition = "TEXT")
-  private String description;
-  @Column(columnDefinition = "TEXT")
-  private String image;
-  private int price;
-  private int quantity;
+  private String createAt;
+  private String address;
+  private String phoneNumber;
+  private int totalPrice;
   private String status;
-  private String createdAt;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "categoryId")
+  @JoinColumn(name = "accountId")
   @EqualsAndHashCode.Include
   @ToString.Include
-  private Category category;
+  private Account account;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "brandId")
-  @EqualsAndHashCode.Include
-  @ToString.Include
-  private Brand brand;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "staffId")
-  @EqualsAndHashCode.Include
-  @ToString.Include
-  private Staff createdBy;
-
-  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
   @EqualsAndHashCode.Include
   @ToString.Include
   @JsonIgnore
   private Collection<OrderDetail> orderDetails;
-
 }

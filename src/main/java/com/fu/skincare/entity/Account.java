@@ -58,4 +58,10 @@ public class Account {
     @ToString.Include
     @JsonIgnore
     private Collection<Staff> staffs;
+
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    @JsonIgnore
+    private Collection<Bill> bills;
 }

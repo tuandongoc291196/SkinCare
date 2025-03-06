@@ -247,4 +247,14 @@ public class ProductServiceImp implements ProductService {
 
   }
 
+  @Override
+  public ProductResponse updateProductQuantity(int productId, int quantity) {
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
+    product.setQuantity(quantity);
+    Product productSaved = productRepository.save(product);
+    ProductResponse response = Utils.convertProduct(productSaved);
+    return response;
+  }
+
 }

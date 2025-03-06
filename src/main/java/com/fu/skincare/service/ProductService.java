@@ -31,4 +31,6 @@ public interface ProductService {
                         boolean isAscending);
 
         public List<ProductResponse> filterProduct(ProductFilterRequest request);
+
+        public ProductResponse updateProductQuantity(int productId, int quantity);
 }
