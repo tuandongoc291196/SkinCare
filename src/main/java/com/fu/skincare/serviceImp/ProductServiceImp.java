@@ -122,10 +122,35 @@ public class ProductServiceImp implements ProductService {
   }
 
   @Override
-  public List<ProductResponse> filterProduct(ProductFilterRequest request, int pageNo, int pageSize, String sortBy,
-      boolean isAscending) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'filterProduct'");
+  public List<ProductResponse> filterProduct(ProductFilterRequest request) {
+
+    if (request.getMaxPrice() < request.getMinPrice()) {
+      throw new EmptyException(ProductErrorMessage.EMPTY);
+    }
+    if (request.getCategoryId() > 0) {
+      categoryRepository.findById(request.getCategoryId())
+          .orElseThrow(() -> new EmptyException(ProductErrorMessage.EMPTY));
+    }
+    if (request.getBrandId() > 0) {
+      brandRepository.findById(request.getBrandId())
+          .orElseThrow(() -> new EmptyException(ProductErrorMessage.EMPTY));
+    }
+
+    List<Product> products = productRepository.filterProduct(request.getCategoryId(), request.getBrandId(),
+        request.getMaxPrice(), request.getMinPrice(), request.getName());
+
+    if (products.isEmpty()) {
+      throw new EmptyException(ProductErrorMessage.EMPTY);
+    }
+
+    List<ProductResponse> response = new ArrayList<ProductResponse>();
+
+    for (Product product : products) {
+      ProductResponse productResponse = Utils.convertProduct(product);
+      response.add(productResponse);
+    }
+
+    return response;
   }
 
   @Override
@@ -165,8 +190,37 @@ public class ProductServiceImp implements ProductService {
   @Override
   public ListProductResponse<CategoryResponse, ProductByCategoryResponse> getProductByCategory(int categoryId,
       int pageNo, int pageSize, String sortBy, boolean isAscending) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getProductByCategory'");
+
+    Category category = categoryRepository.findById(categoryId)
+        .orElseThrow(() -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
+
+    Page<Product> products;
+
+    if (isAscending) {
+      products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
+    } else {
+      products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
+    }
+
+    if (products.isEmpty()) {
+      throw new EmptyException(ProductErrorMessage.EMPTY);
+    }
+
+    ListProductResponse<CategoryResponse, ProductByCategoryResponse> response = new ListProductResponse<CategoryResponse, ProductByCategoryResponse>();
+    CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
+    response.setDetails(categoryResponse);
+    List<ProductByCategoryResponse> listByCategory = new ArrayList<ProductByCategoryResponse>();
+    for (Product product : products) {
+      ProductResponse productResponse = Utils.convertProduct(product);
+      ProductByCategoryResponse productByCategoryResponse = modelMapper.map(productResponse,
+          ProductByCategoryResponse.class);
+      listByCategory.add(productByCategoryResponse);
+    }
+
+    response.setProducts(listByCategory);
+    return response;
   }
 
 }

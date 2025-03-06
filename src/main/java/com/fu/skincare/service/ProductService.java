@@ -12,21 +12,20 @@ import com.fu.skincare.response.product.ProductByCategoryResponse;
 import com.fu.skincare.response.product.ProductResponse;
 
 public interface ProductService {
-    public ProductResponse createProduct(CreateProductRequest request);
+        public ProductResponse createProduct(CreateProductRequest request);
 
-    public ProductResponse getProductById(int id);
+        public ProductResponse getProductById(int id);
 
-    public List<ProductResponse> getAllProduct(int pageNo, int pageSize, String sortBy, boolean isAscending);
+        public List<ProductResponse> getAllProduct(int pageNo, int pageSize, String sortBy, boolean isAscending);
 
-    public ListProductResponse<BrandResponse, ProductByBrandResponse> getProductByBrand(int brandId, int pageNo,
-            int pageSize, String sortBy,
-            boolean isAscending);
+        public ListProductResponse<BrandResponse, ProductByBrandResponse> getProductByBrand(int brandId, int pageNo,
+                        int pageSize, String sortBy,
+                        boolean isAscending);
 
-    public ListProductResponse<CategoryResponse, ProductByCategoryResponse> getProductByCategory(int categoryId,
-            int pageNo,
-            int pageSize, String sortBy,
-            boolean isAscending);
+        public ListProductResponse<CategoryResponse, ProductByCategoryResponse> getProductByCategory(int categoryId,
+                        int pageNo,
+                        int pageSize, String sortBy,
+                        boolean isAscending);
 
-    public List<ProductResponse> filterProduct(ProductFilterRequest request, int pageNo, int pageSize, String sortBy,
-            boolean isAscending);
+        public List<ProductResponse> filterProduct(ProductFilterRequest request);
 }
