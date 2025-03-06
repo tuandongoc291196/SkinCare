@@ -28,6 +28,7 @@ import com.fu.skincare.repository.CategoryRepository;
 import com.fu.skincare.repository.ProductRepository;
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
+import com.fu.skincare.request.product.UpdateProductRequest;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
 import com.fu.skincare.response.product.ListProductResponse;
@@ -221,6 +222,29 @@ public class ProductServiceImp implements ProductService {
 
     response.setProducts(listByCategory);
     return response;
+  }
+
+  @Override
+  public ProductResponse updateProduct(UpdateProductRequest request) {
+    Product product = productRepository.findById(request.getId())
+        .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
+    Category category = categoryRepository.findById(request.getCategoryId())
+        .orElseThrow(() -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
+
+    Brand brand = brandRepository.findById(request.getBrandId())
+        .orElseThrow(() -> new ErrorException(BrandErrorMessage.NOT_FOUND));
+    product.setName(request.getName());
+    product.setDescription(request.getDescription());
+    product.setImage(request.getImage());
+    product.setPrice(request.getPrice());
+    product.setQuantity(request.getQuantity());
+    product.setCategory(category);
+    product.setBrand(brand);
+
+    Product productSaved = productRepository.save(product);
+    ProductResponse response = Utils.convertProduct(productSaved);
+    return response;
+
   }
 
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
+import com.fu.skincare.request.product.UpdateProductRequest;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
 import com.fu.skincare.response.product.ListProductResponse;
@@ -13,6 +14,8 @@ import com.fu.skincare.response.product.ProductResponse;
 
 public interface ProductService {
         public ProductResponse createProduct(CreateProductRequest request);
+
+        public ProductResponse updateProduct(UpdateProductRequest request);
 
         public ProductResponse getProductById(int id);
 

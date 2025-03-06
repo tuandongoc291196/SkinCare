@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,6 +20,7 @@ import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.product.ProductSuccessMessage;
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
+import com.fu.skincare.request.product.UpdateProductRequest;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.brand.BrandResponse;
@@ -101,6 +103,27 @@ public class ProductController {
     List<ProductResponse> data = productService.filterProduct(request);
     responseDTO.setData(data);
     responseDTO.setMessage(ProductSuccessMessage.GET_BY_CATEGORY_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/update")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> updateProduct(@Validated @RequestBody UpdateProductRequest request) {
+    ResponseDTO<ProductResponse> responseDTO = new ResponseDTO<ProductResponse>();
+    ProductResponse data = productService.updateProduct(request);
+    responseDTO.setData(data);
+    responseDTO.setMessage(ProductSuccessMessage.UPDATE_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @GetMapping("/")
+  public ResponseEntity<?> getProductById(@RequestParam int id) {
+    ResponseDTO<ProductResponse> responseDTO = new ResponseDTO<ProductResponse>();
+    ProductResponse data = productService.getProductById(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(ProductSuccessMessage.GET_BY_ID_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }
