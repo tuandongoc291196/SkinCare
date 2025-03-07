@@ -30,8 +30,6 @@ public class BrandServiceImp implements BrandService {
   public BrandResponse createBrand(CreateBrandRequest request) {
     Brand brand = Brand.builder()
         .name(request.getName())
-        .email(request.getEmail())
-        .phoneNumber(request.getPhoneNumber())
         .createdAt(Utils.formatVNDatetimeNow())
         .status(Status.ACTIVATED)
         .build();
