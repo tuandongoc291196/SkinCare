@@ -26,10 +26,7 @@ public class CreateProductRequest {
   private int price;
   @Min(value = 0, message = "Quantity must be greater than 0")
   private int quantity;
-  @NotBlank
   private int categoryId;
-  @NotBlank
   private int brandId;
-  @NotBlank
   private int accountId;
 }
