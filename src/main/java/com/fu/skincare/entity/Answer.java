@@ -28,44 +28,27 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Account {
-
+public class Answer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String email;
-    private String name;
-    private String phoneNumber;
-    private String address;
-    @JsonIgnore
-    private String password;
+    private String answer;
+    private int point;
+    private String createdAt;
     private String status;
-    private String createAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "roleId")
+    @JoinColumn(name = "questionId")
     @EqualsAndHashCode.Include
     @ToString.Include
-    private Role role;
+    private Question question;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    @JsonIgnore
-    private Collection<Staff> staffs;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    @JsonIgnore
-    private Collection<Bill> bills;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "answer", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Include
     @ToString.Include
     @JsonIgnore
