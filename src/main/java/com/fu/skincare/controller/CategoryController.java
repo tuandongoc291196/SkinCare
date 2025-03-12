@@ -34,7 +34,7 @@ public class CategoryController {
   private CategoryService categoryService;
 
   @PostMapping("/create")
-  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
   public ResponseEntity<?> create(@Validated @RequestBody CreateCategoryRequest request) {
     ResponseDTO<CategoryResponse> responseDTO = new ResponseDTO<CategoryResponse>();
     CategoryResponse data = categoryService.createCategory(request);

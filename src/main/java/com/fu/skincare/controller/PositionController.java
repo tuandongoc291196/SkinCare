@@ -34,7 +34,7 @@ public class PositionController {
   private final PositionService positionService;
 
   @PostMapping("/create")
-  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
   public ResponseEntity<?> create(@Validated @RequestBody CreatePositionRequest request) {
     ResponseDTO<PositionResponse> responseDTO = new ResponseDTO<PositionResponse>();
     PositionResponse positionResponse = positionService.createPostion(request);
@@ -45,7 +45,7 @@ public class PositionController {
   }
 
   @GetMapping("/")
-  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
   public ResponseEntity<?> getPositionById(@Validated @RequestParam int id) {
     ResponseDTO<PositionResponse> responseDTO = new ResponseDTO<PositionResponse>();
     PositionResponse positionResponse = positionService.getPositionById(id);
@@ -56,7 +56,7 @@ public class PositionController {
   }
 
   @GetMapping("/getAllActivatedPositons")
-  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN)
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
   public ResponseEntity<?> getAllActivatesPosition() {
     ListResponseDTO<PositionResponse> responseDTO = new ListResponseDTO<PositionResponse>();
     List<PositionResponse> positionResponse = positionService.getListPosition();
