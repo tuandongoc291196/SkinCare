@@ -15,17 +15,22 @@ import com.fu.skincare.constants.message.account.AccountErrorMessage;
 import com.fu.skincare.constants.message.brand.BrandErrorMessage;
 import com.fu.skincare.constants.message.category.CategoryErrorMessage;
 import com.fu.skincare.constants.message.product.ProductErrorMessage;
+import com.fu.skincare.constants.message.skinType.SkinTypeErrorMessage;
 import com.fu.skincare.constants.message.staff.StaffErrorMessage;
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Brand;
 import com.fu.skincare.entity.Category;
 import com.fu.skincare.entity.Product;
+import com.fu.skincare.entity.ProductSkinType;
+import com.fu.skincare.entity.SkinType;
 import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.BrandRepository;
 import com.fu.skincare.repository.CategoryRepository;
 import com.fu.skincare.repository.ProductRepository;
+import com.fu.skincare.repository.ProductSkinTypeRepository;
+import com.fu.skincare.repository.SkinTypeRepository;
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
 import com.fu.skincare.request.product.UpdateProductRequest;
@@ -49,6 +54,8 @@ public class ProductServiceImp implements ProductService {
   private final CategoryRepository categoryRepository;
   private final AccountRepository accountRepository;
   private final ModelMapper modelMapper;
+  private final SkinTypeRepository skinTypeRepository;
+  private final ProductSkinTypeRepository productSkinTypeRepository;
 
   @Override
   public ProductResponse createProduct(CreateProductRequest request) {
@@ -66,6 +73,14 @@ public class ProductServiceImp implements ProductService {
       throw new ErrorException(AccountErrorMessage.ACCOUNT_NOT_PERMISSION);
     }
 
+    List<SkinType> listSkinType = new ArrayList<SkinType>();
+
+    for (int skinType : request.getSkinTypeId()) {
+      SkinType skinTypeEntity = skinTypeRepository.findById(skinType)
+          .orElseThrow(() -> new ErrorException(SkinTypeErrorMessage.NOT_FOUND));
+      listSkinType.add(skinTypeEntity);
+    }
+
     Product product = Product.builder()
         .name(request.getName())
         .description(request.getDescription())
@@ -81,6 +96,16 @@ public class ProductServiceImp implements ProductService {
         .build();
 
     Product productSaved = productRepository.save(product);
+
+    if (!listSkinType.isEmpty()) {
+      for (SkinType skinType : listSkinType) {
+        ProductSkinType productSkinType = ProductSkinType.builder()
+            .product(productSaved)
+            .skinType(skinType)
+            .build();
+        productSkinTypeRepository.save(productSkinType);
+      }
+    }
 
     ProductResponse response = Utils.convertProduct(productSaved);
     return response;

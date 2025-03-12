@@ -75,4 +75,10 @@ public class Product {
   @JsonIgnore
   private Collection<OrderDetail> orderDetails;
 
+  @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  @JsonIgnore
+  private Collection<ProductSkinType> productSkinTypes;
+
 }

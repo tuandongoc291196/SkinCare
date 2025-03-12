@@ -26,5 +26,6 @@ public class ProductByBrandResponse {
   private String createdAt;
   private CategoryResponse category;
   private String createdBy;
+  private String skinType;
 
 }

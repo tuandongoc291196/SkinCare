@@ -28,4 +28,5 @@ public class ProductResponse {
   private CategoryResponse category;
   private BrandResponse brand;
   private String createdBy;
+  private String skinTypes;
 }

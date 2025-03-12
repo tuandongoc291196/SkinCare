@@ -1,5 +1,7 @@
 package com.fu.skincare.request.product;
 
+import java.util.List;
+
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
@@ -29,4 +31,5 @@ public class CreateProductRequest {
   private int categoryId;
   private int brandId;
   private int accountId;
+  private List<Integer> skinTypeId;
 }
