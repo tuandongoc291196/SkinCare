@@ -65,15 +65,8 @@ public class AccountServiceImp implements AccountService {
             () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND)
         );
 
-        long checkEmailExist = accountRepository.countByEmail(request.getEmail());
-
-        if (checkEmailExist > 1){
-            throw new ErrorException(AccountErrorMessage.EXIST_EMAIL_ACCOUNT);
-        }
-
         account.setAddress(request.getAddress());
         account.setPhoneNumber(request.getPhoneNumber());
-        account.setEmail(request.getEmail());
         account.setName(request.getName());
 
         accountRepository.save(account);

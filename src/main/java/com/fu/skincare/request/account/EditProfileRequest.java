@@ -15,7 +15,6 @@ import lombok.ToString;
 @Builder
 public class EditProfileRequest {
     private int id;
-    private String email;
     private String name;
     private String phoneNumber;
     private String address;

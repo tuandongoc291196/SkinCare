@@ -52,7 +52,7 @@ public class AccountController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
-    @PutMapping("/getAll")
+    @PutMapping("/edit")
     public ResponseEntity<?> editProfile(@RequestBody EditProfileRequest request) {
         ResponseDTO<AccountResponse> responseDTO = new ResponseDTO<>();
         AccountResponse data = accountService.editProfile(request);
