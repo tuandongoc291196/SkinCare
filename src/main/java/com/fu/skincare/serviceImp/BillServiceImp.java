@@ -3,7 +3,13 @@ package com.fu.skincare.serviceImp;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fu.skincare.constants.message.bill.BillErrorMessage;
+import com.fu.skincare.exception.EmptyException;
+import com.fu.skincare.response.bill.BillByAccountResponse;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.fu.skincare.constants.Status;
@@ -79,5 +85,74 @@ public class BillServiceImp implements BillService {
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;
   }
+
+  @Override
+  public BillResponse getById(int id) {
+    Bill bill = billRepository.findById(id).orElseThrow(
+            () -> new ErrorException(BillErrorMessage.NOT_FOUND)
+    );
+      return Utils.convertBillResponse(bill);
+  }
+
+  @Override
+  public List<BillResponse> getAll(int pageNo, int pageSize, String sortBy, boolean isAscending) {
+
+    Page<Bill> pageResults;
+    if (isAscending) {
+      pageResults = billRepository.findAllByStatus(Status.ACTIVATED,
+              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending())
+      );
+    } else {
+      pageResults = billRepository.findAllByStatus(Status.ACTIVATED,
+              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending())
+      );
+    }
+
+    if (!pageResults.hasContent()) {
+      throw new EmptyException(BillErrorMessage.EMPTY);
+    }
+
+    List<BillResponse> responses = new ArrayList<>();
+
+    for (Bill bill : pageResults.getContent()) {
+      BillResponse billResponse = Utils.convertBillResponse(bill);
+      responses.add(billResponse);
+    }
+
+    return responses;
+  }
+
+  @Override
+  public List<BillByAccountResponse> getAllByAccountId(int accountId, int pageNo, int pageSize, String sortBy, boolean isAscending) {
+    Account account = accountRepository.findById(accountId).orElseThrow(
+            () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND)
+    );
+
+    Page<Bill> pageResults;
+    if (isAscending) {
+      pageResults = billRepository.findAllByStatusAndAccount(Status.ACTIVATED, account,
+              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending())
+      );
+    } else {
+      pageResults = billRepository.findAllByStatusAndAccount(Status.ACTIVATED, account,
+              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending())
+      );
+    }
+
+    if (!pageResults.hasContent()) {
+      throw new EmptyException(BillErrorMessage.EMPTY);
+    }
+
+    List<BillByAccountResponse> responses = new ArrayList<>();
+
+    for (Bill bill : pageResults.getContent()) {
+      BillResponse billResponse = Utils.convertBillResponse(bill);
+      BillByAccountResponse billByAccountResponse = modelMapper.map(billResponse, BillByAccountResponse.class);
+      responses.add(billByAccountResponse);
+    }
+
+    return responses;
+  }
+
 
 }

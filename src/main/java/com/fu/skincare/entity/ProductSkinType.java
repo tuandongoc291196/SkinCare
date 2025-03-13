@@ -1,5 +1,6 @@
 package com.fu.skincare.entity;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -24,6 +25,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
+@Entity
 public class ProductSkinType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,12 +4,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
+import com.fu.skincare.entity.Bill;
+import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.bill.BillResponse;
+import com.fu.skincare.response.orderDetail.OrderDetailResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -73,5 +78,21 @@ public class Utils {
     response.setSkinTypes(names);
     return response;
 
+  }
+
+  public static BillResponse convertBillResponse(Bill bill) {
+    List<OrderDetailResponse> listOrderDetailResponse = new ArrayList<>();
+    bill.getOrderDetails().forEach(orderDetail -> {
+      ProductResponse productResponse = Utils.convertProduct(orderDetail.getProduct());
+      OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetail, OrderDetailResponse.class);
+      orderDetailResponse.setProduct(productResponse);
+      listOrderDetailResponse.add(orderDetailResponse);
+    });
+
+    BillResponse billResponse = modelMapper.map(bill, BillResponse.class);
+    AccountResponse accountResponse = modelMapper.map(bill.getAccount(), AccountResponse.class);
+    billResponse.setAccount(accountResponse);
+    billResponse.setListProducts(listOrderDetailResponse);
+    return billResponse;
   }
 }

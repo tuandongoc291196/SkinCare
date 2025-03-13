@@ -31,6 +31,10 @@ public class OrderDetailServiceImp implements OrderDetailService {
     Product product = productRepository.findById(request.getProductId())
         .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
 
+    if (product.getQuantity() < request.getQuantity()) {
+      throw new ErrorException(ProductErrorMessage.NOT_ENOUGH);
+    }
+
     OrderDetail orderDetail = OrderDetail.builder()
         .product(product)
         .quantity(request.getQuantity())
