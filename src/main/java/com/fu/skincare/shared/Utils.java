@@ -75,7 +75,7 @@ public class Utils {
     for (ProductSkinType productSkinType : product.getProductSkinTypes()) {
       names += productSkinType.getSkinType().getType() + ", ";
     }
-    response.setSkinTypes(names);
+    response.setSuitableFor(names);
     return response;
 
   }
