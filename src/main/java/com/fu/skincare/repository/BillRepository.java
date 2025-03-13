@@ -12,5 +12,5 @@ import com.fu.skincare.entity.Bill;
 public interface BillRepository extends JpaRepository<Bill, Integer> {
     Page<Bill> findAllByStatus(String status, Pageable pageable);
 
-    Page<Bill> findAllByStatusAndAccount(String status, Account account, Pageable pageable);
+    Page<Bill> findAllByAccount(Account account, Pageable pageable);
 }

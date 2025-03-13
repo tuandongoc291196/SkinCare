@@ -89,9 +89,8 @@ public class BillServiceImp implements BillService {
   @Override
   public BillResponse getById(int id) {
     Bill bill = billRepository.findById(id).orElseThrow(
-            () -> new ErrorException(BillErrorMessage.NOT_FOUND)
-    );
-      return Utils.convertBillResponse(bill);
+        () -> new ErrorException(BillErrorMessage.NOT_FOUND));
+    return Utils.convertBillResponse(bill);
   }
 
   @Override
@@ -99,13 +98,11 @@ public class BillServiceImp implements BillService {
 
     Page<Bill> pageResults;
     if (isAscending) {
-      pageResults = billRepository.findAllByStatus(Status.ACTIVATED,
-              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending())
-      );
+      pageResults = billRepository.findAll(
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
     } else {
-      pageResults = billRepository.findAllByStatus(Status.ACTIVATED,
-              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending())
-      );
+      pageResults = billRepository.findAll(
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
     }
 
     if (!pageResults.hasContent()) {
@@ -123,20 +120,18 @@ public class BillServiceImp implements BillService {
   }
 
   @Override
-  public List<BillByAccountResponse> getAllByAccountId(int accountId, int pageNo, int pageSize, String sortBy, boolean isAscending) {
+  public List<BillByAccountResponse> getAllByAccountId(int accountId, int pageNo, int pageSize, String sortBy,
+      boolean isAscending) {
     Account account = accountRepository.findById(accountId).orElseThrow(
-            () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND)
-    );
+        () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
 
     Page<Bill> pageResults;
     if (isAscending) {
-      pageResults = billRepository.findAllByStatusAndAccount(Status.ACTIVATED, account,
-              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending())
-      );
+      pageResults = billRepository.findAllByAccount(account,
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
     } else {
-      pageResults = billRepository.findAllByStatusAndAccount(Status.ACTIVATED, account,
-              PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending())
-      );
+      pageResults = billRepository.findAllByAccount(account,
+          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
     }
 
     if (!pageResults.hasContent()) {
@@ -153,6 +148,5 @@ public class BillServiceImp implements BillService {
 
     return responses;
   }
-
 
 }
