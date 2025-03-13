@@ -11,5 +11,5 @@ import com.fu.skincare.entity.Account;
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     // Add custom query methods if needed
     Optional<Account> findAccountByEmail(String email);
-
+    long countByEmail(String email);
 }

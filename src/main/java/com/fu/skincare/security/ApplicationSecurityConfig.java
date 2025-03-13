@@ -41,6 +41,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/question/**",
                         "/skinType/**",
                         "/bill/**",
+                        "/account/**",
                         "/brand/**",
                         "/swagger-resources/**",
                         "/v2/api-docs",
