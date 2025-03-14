@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import com.fu.skincare.constants.Status;
+import com.fu.skincare.constants.message.orderDetail.OrderDetailErrorMessage;
 import com.fu.skincare.constants.message.product.ProductErrorMessage;
 import com.fu.skincare.entity.OrderDetail;
 import com.fu.skincare.entity.Product;
@@ -12,6 +13,7 @@ import com.fu.skincare.repository.OrderDetailRepository;
 import com.fu.skincare.repository.ProductRepository;
 import com.fu.skincare.request.orderDetail.CreateOrderDetailRequest;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
+import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.service.OrderDetailService;
 import com.fu.skincare.shared.Utils;
 
@@ -48,8 +50,17 @@ public class OrderDetailServiceImp implements OrderDetailService {
 
   @Override
   public OrderDetailResponse getOrderDetailById(int id) {
-    // TODO Auto-generated method stub
-    throw new UnsupportedOperationException("Unimplemented method 'getOrderDetailById'");
+
+    OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(
+      () -> new ErrorException(OrderDetailErrorMessage.ORDER_DETAIL_NOT_FOUND)
+    );
+
+    OrderDetailResponse response = modelMapper.map(orderDetail, OrderDetailResponse.class);
+
+    ProductResponse productResponse = Utils.convertProduct(orderDetail.getProduct());
+
+    response.setProductResponse(productResponse);
+    return response;
   }
 
 }

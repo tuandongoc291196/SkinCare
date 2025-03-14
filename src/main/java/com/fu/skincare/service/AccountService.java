@@ -12,6 +12,8 @@ public interface AccountService {
 
     public AccountResponse getById(int id);
 
+    public AccountResponse updateStatus(int id, String status);
+
     public List<AccountResponse> getAllAccount();
 
     public List<AccountResponse> filterAccount(FilterAccountRequest request);

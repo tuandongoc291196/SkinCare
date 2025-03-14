@@ -21,5 +21,5 @@ public class OrderDetailResponse {
   private int quantity;
   private String status;
   private int price;
-  private ProductResponse product;
+  private ProductResponse productResponse;
 }

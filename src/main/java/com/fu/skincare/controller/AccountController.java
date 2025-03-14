@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,6 +59,27 @@ public class AccountController {
         AccountResponse data = accountService.editProfile(request);
         responseDTO.setData(data);
         responseDTO.setMessage(AccountSuccessMessage.UPDATE_ACCOUNT);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @DeleteMapping("/delete/")
+    @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+    public ResponseEntity<?> deleteAccount(@RequestParam int id) {
+        ResponseDTO<AccountResponse> responseDTO = new ResponseDTO<>();
+        AccountResponse data = accountService.updateStatus(id, Status.DISABLED);
+        responseDTO.setData(data);
+        responseDTO.setMessage(AccountSuccessMessage.DISABLE_ACCOUNT);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @PutMapping("/activate/")
+    public ResponseEntity<?> activateAccount(@RequestParam int id) {
+        ResponseDTO<AccountResponse> responseDTO = new ResponseDTO<>();
+        AccountResponse data = accountService.updateStatus(id, Status.ACTIVATED);
+        responseDTO.setData(data);
+        responseDTO.setMessage(AccountSuccessMessage.ACTIVATE_ACCOUNT);
         responseDTO.setStatus(Status.SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }

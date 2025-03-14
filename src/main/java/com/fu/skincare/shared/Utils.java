@@ -85,7 +85,7 @@ public class Utils {
     bill.getOrderDetails().forEach(orderDetail -> {
       ProductResponse productResponse = Utils.convertProduct(orderDetail.getProduct());
       OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetail, OrderDetailResponse.class);
-      orderDetailResponse.setProduct(productResponse);
+      orderDetailResponse.setProductResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
 

@@ -255,7 +255,6 @@ public class ProductServiceImp implements ProductService {
         .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
     Category category = categoryRepository.findById(request.getCategoryId())
         .orElseThrow(() -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
-    
 
     Brand brand = brandRepository.findById(request.getBrandId())
         .orElseThrow(() -> new ErrorException(BrandErrorMessage.NOT_FOUND));
@@ -283,4 +282,13 @@ public class ProductServiceImp implements ProductService {
     return response;
   }
 
+  @Override
+  public ProductResponse updateProductStatus(int productId, String status) {
+    Product product = productRepository.findById(productId)
+        .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
+
+    product.setStatus(status);
+    productRepository.save(product);
+    return Utils.convertProduct(product);
+  }
 }

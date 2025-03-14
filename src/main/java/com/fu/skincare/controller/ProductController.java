@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -124,6 +125,28 @@ public class ProductController {
     ProductResponse data = productService.getProductById(id);
     responseDTO.setData(data);
     responseDTO.setMessage(ProductSuccessMessage.GET_BY_ID_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @DeleteMapping("/disable/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> deleteProduct(@RequestParam int productId) {
+    ResponseDTO<ProductResponse> responseDTO = new ResponseDTO<ProductResponse>();
+    ProductResponse data = productService.updateProductStatus(productId, Status.DISABLED);
+    responseDTO.setData(data);
+    responseDTO.setMessage(ProductSuccessMessage.DELETE_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/active/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> activateProduct(@RequestParam int productId) {
+    ResponseDTO<ProductResponse> responseDTO = new ResponseDTO<ProductResponse>();
+    ProductResponse data = productService.updateProductStatus(productId, Status.ACTIVATED);
+    responseDTO.setData(data);
+    responseDTO.setMessage(ProductSuccessMessage.UPDATE_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }

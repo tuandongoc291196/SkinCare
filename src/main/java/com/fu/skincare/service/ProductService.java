@@ -33,4 +33,6 @@ public interface ProductService {
         public List<ProductResponse> filterProduct(ProductFilterRequest request);
 
         public ProductResponse updateProductQuantity(int productId, int quantity);
+
+        public ProductResponse updateProductStatus(int productId, String status);
 }

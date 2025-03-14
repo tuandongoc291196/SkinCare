@@ -29,8 +29,7 @@ public class AccountServiceImp implements AccountService {
     public AccountResponse getById(int id) {
 
         Account account = accountRepository.findById(id).orElseThrow(
-            () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND)
-        );
+                () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
 
         return modelMapper.map(account, AccountResponse.class);
     }
@@ -40,12 +39,12 @@ public class AccountServiceImp implements AccountService {
 
         List<Account> listAccounts = accountRepository.findAll();
 
-        if (listAccounts.isEmpty()){
+        if (listAccounts.isEmpty()) {
             throw new EmptyException(AccountErrorMessage.EMPTY_ACCOUNT);
         }
 
         List<AccountResponse> responses = new ArrayList<>();
-        for (Account account : listAccounts){
+        for (Account account : listAccounts) {
             AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
             responses.add(accountResponse);
         }
@@ -62,13 +61,22 @@ public class AccountServiceImp implements AccountService {
     public AccountResponse editProfile(EditProfileRequest request) {
 
         Account account = accountRepository.findById(request.getId()).orElseThrow(
-            () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND)
-        );
+                () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
 
         account.setAddress(request.getAddress());
         account.setPhoneNumber(request.getPhoneNumber());
         account.setName(request.getName());
 
+        accountRepository.save(account);
+        return modelMapper.map(account, AccountResponse.class);
+    }
+
+    @Override
+    public AccountResponse updateStatus(int id, String status) {
+        Account account = accountRepository.findById(id).orElseThrow(
+                () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
+
+        account.setStatus(status);
         accountRepository.save(account);
         return modelMapper.map(account, AccountResponse.class);
     }

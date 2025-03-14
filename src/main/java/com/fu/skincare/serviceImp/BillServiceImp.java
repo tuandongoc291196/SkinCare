@@ -75,7 +75,7 @@ public class BillServiceImp implements BillService {
           orderDetailSaved.getProduct().getQuantity() - orderDetailSaved.getQuantity());
       ProductResponse productResponse = Utils.convertProduct(orderDetailSaved.getProduct());
       OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetailSaved, OrderDetailResponse.class);
-      orderDetailResponse.setProduct(productResponse);
+      orderDetailResponse.setProductResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
 
