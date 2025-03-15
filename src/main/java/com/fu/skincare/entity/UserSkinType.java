@@ -26,7 +26,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserTest {
+public class UserSkinType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -35,17 +35,10 @@ public class UserTest {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "questionId")
+    @JoinColumn(name = "accountId")
     @EqualsAndHashCode.Include
     @ToString.Include
-    private Question question;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "answerId")
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    private Answer answer;
+    private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @Fetch(FetchMode.JOIN)
@@ -53,5 +46,4 @@ public class UserTest {
     @EqualsAndHashCode.Include
     @ToString.Include
     private UserTestResult userTestResult;
-
 }

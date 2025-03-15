@@ -91,6 +91,7 @@ public class Utils {
 
     BillResponse billResponse = modelMapper.map(bill, BillResponse.class);
     AccountResponse accountResponse = modelMapper.map(bill.getAccount(), AccountResponse.class);
+    accountResponse.setRoleName(bill.getAccount().getRole().getName());
     billResponse.setAccount(accountResponse);
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;

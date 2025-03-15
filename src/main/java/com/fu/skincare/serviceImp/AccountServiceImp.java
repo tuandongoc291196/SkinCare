@@ -30,8 +30,9 @@ public class AccountServiceImp implements AccountService {
 
         Account account = accountRepository.findById(id).orElseThrow(
                 () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
-
-        return modelMapper.map(account, AccountResponse.class);
+        AccountResponse response = modelMapper.map(account, AccountResponse.class);
+        response.setRoleName(account.getRole().getName());
+        return response;
     }
 
     @Override
@@ -46,6 +47,7 @@ public class AccountServiceImp implements AccountService {
         List<AccountResponse> responses = new ArrayList<>();
         for (Account account : listAccounts) {
             AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+            accountResponse.setRoleName(account.getRole().getName());
             responses.add(accountResponse);
         }
         return responses;
@@ -66,9 +68,10 @@ public class AccountServiceImp implements AccountService {
         account.setAddress(request.getAddress());
         account.setPhoneNumber(request.getPhoneNumber());
         account.setName(request.getName());
-
         accountRepository.save(account);
-        return modelMapper.map(account, AccountResponse.class);
+        AccountResponse response = modelMapper.map(account, AccountResponse.class);
+        response.setRoleName(account.getRole().getName());
+        return response;
     }
 
     @Override
@@ -78,7 +81,9 @@ public class AccountServiceImp implements AccountService {
 
         account.setStatus(status);
         accountRepository.save(account);
-        return modelMapper.map(account, AccountResponse.class);
+        AccountResponse response = modelMapper.map(account, AccountResponse.class);
+        response.setRoleName(account.getRole().getName());
+        return response;
     }
 
 }

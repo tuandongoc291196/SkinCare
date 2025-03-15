@@ -81,6 +81,7 @@ public class BillServiceImp implements BillService {
 
     BillResponse billResponse = modelMapper.map(billSaved, BillResponse.class);
     AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
+    accountResponse.setRoleName(account.getRole().getName());
     billResponse.setAccount(accountResponse);
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;

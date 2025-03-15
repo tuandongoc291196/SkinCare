@@ -21,4 +21,5 @@ public class AccountResponse {
   private String address;
   private String status;
   private String createAt;
+  private String roleName;
 }

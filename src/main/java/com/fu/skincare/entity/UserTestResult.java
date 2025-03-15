@@ -28,53 +28,35 @@ import lombok.ToString;
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
-public class Account {
-
+public class UserTestResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String email;
-    private String name;
-    private String phoneNumber;
-    private String address;
-    @JsonIgnore
-    private String password;
+    private String createdAt;
+    private int totalPoint;
+    private int testTime;
     private String status;
-    private String createAt;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @Fetch(FetchMode.JOIN)
-    @JoinColumn(name = "roleId")
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    private Role role;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userTestResult", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Include
     @ToString.Include
     @JsonIgnore
-    private Collection<Staff> staffs;
+    private Collection<UserTest> userTests;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    @JsonIgnore
-    private Collection<Bill> bills;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    @EqualsAndHashCode.Include
-    @ToString.Include
-    @JsonIgnore
-    private Collection<UserTestResult> userTestResults;
-
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "userTestResult", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Include
     @ToString.Include
     @JsonIgnore
     private Collection<UserSkinType> userSkinTypes;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name = "accountId")
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private Account account;
 }
