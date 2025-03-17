@@ -17,6 +17,7 @@ import com.fu.skincare.constants.RolePreAuthorize;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.position.PositionSuccessMessage;
 import com.fu.skincare.request.position.CreatePositionRequest;
+import com.fu.skincare.request.position.UpdatePositionRequest;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.position.PositionResponse;
@@ -62,6 +63,17 @@ public class PositionController {
     List<PositionResponse> positionResponse = positionService.getListPosition();
     responseDTO.setData(positionResponse);
     responseDTO.setMessage(PositionSuccessMessage.GET_ALL_POSITION_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @GetMapping("/update/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> update(UpdatePositionRequest request) {
+    ResponseDTO<PositionResponse> responseDTO = new ResponseDTO<PositionResponse>();
+    PositionResponse positionResponse = positionService.updatePostion(request);
+    responseDTO.setData(positionResponse);
+    responseDTO.setMessage(PositionSuccessMessage.UPDATE_POSITION_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }

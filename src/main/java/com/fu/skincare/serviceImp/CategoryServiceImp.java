@@ -12,6 +12,7 @@ import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.CategoryRepository;
 import com.fu.skincare.request.category.CreateCategoryRequest;
+import com.fu.skincare.request.category.UpdateCategoryRequest;
 import com.fu.skincare.response.category.CategoryResponse;
 import com.fu.skincare.service.CategoryService;
 import com.fu.skincare.shared.Utils;
@@ -57,5 +58,17 @@ public class CategoryServiceImp implements CategoryService {
     }
     List<CategoryResponse> categoryResponses = Utils.mapList(categories, CategoryResponse.class);
     return categoryResponses;
+  }
+
+  @Override
+  public CategoryResponse updateCategory(UpdateCategoryRequest request) {
+    Category category = categoryRepository.findById(request.getId()).orElseThrow(
+        () -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
+
+    category.setName(request.getName());
+    category.setDescription(request.getDescription());
+    categoryRepository.save(category);
+    return modelMapper.map(category, CategoryResponse.class);
+
   }
 }

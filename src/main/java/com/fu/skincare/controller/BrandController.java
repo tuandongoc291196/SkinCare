@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -18,6 +19,7 @@ import com.fu.skincare.constants.RolePreAuthorize;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.brand.BrandSuccessMessage;
 import com.fu.skincare.request.brand.CreateBrandRequest;
+import com.fu.skincare.request.brand.UpdateBrandRequest;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.brand.BrandResponse;
@@ -60,6 +62,16 @@ public class BrandController {
     BrandResponse data = brandService.getBrandById(id);
     responseDTO.setData(data);
     responseDTO.setMessage(BrandSuccessMessage.GET_BY_ID_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/update/")
+  public ResponseEntity<?> update(@Validated @RequestBody UpdateBrandRequest request) {
+    ResponseDTO<BrandResponse> responseDTO = new ResponseDTO<BrandResponse>();
+    BrandResponse data = brandService.updateBrand(request);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BrandSuccessMessage.UPDATE_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }

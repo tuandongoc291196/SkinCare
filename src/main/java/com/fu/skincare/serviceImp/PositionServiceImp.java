@@ -12,6 +12,7 @@ import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.PositionRepository;
 import com.fu.skincare.request.position.CreatePositionRequest;
+import com.fu.skincare.request.position.UpdatePositionRequest;
 import com.fu.skincare.response.position.PositionResponse;
 import com.fu.skincare.service.PositionService;
 import com.fu.skincare.shared.Utils;
@@ -57,6 +58,15 @@ public class PositionServiceImp implements PositionService {
 
     return modelMapper.map(position, PositionResponse.class);
 
+  }
+
+  @Override
+  public PositionResponse updatePostion(UpdatePositionRequest request) {
+    Position position = positionRepository.findById(request.getId())
+        .orElseThrow(() -> new ErrorException(PositionErrorMessage.POSITION_NOT_EXIST));
+    position.setName(request.getName());
+    positionRepository.save(position);
+    return modelMapper.map(position, PositionResponse.class);
   }
 
 }

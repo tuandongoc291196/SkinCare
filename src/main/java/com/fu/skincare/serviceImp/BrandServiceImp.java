@@ -12,6 +12,7 @@ import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.BrandRepository;
 import com.fu.skincare.request.brand.CreateBrandRequest;
+import com.fu.skincare.request.brand.UpdateBrandRequest;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.service.BrandService;
 import com.fu.skincare.shared.Utils;
@@ -54,6 +55,17 @@ public class BrandServiceImp implements BrandService {
     }
 
     return Utils.mapList(brands, BrandResponse.class);
+  }
+
+  @Override
+  public BrandResponse updateBrand(UpdateBrandRequest request) {
+
+    Brand brand = brandRepository.findById(request.getId()).orElseThrow(
+        () -> new ErrorException(BrandErrorMessage.NOT_FOUND));
+
+    brand.setName(request.getName());
+    brandRepository.save(brand);
+    return modelMapper.map(brand, BrandResponse.class);
   }
 
 }
