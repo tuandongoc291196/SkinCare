@@ -37,4 +37,10 @@ public class SkinType {
     @ToString.Include
     @JsonIgnore
     private Collection<ProductSkinType> productSkinTypes;
+
+    @OneToMany(mappedBy = "skinType", cascade = CascadeType.ALL)
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    @JsonIgnore
+    private Collection<UserSkinType> userSkinTypes;
 }

@@ -46,4 +46,11 @@ public class UserSkinType {
     @EqualsAndHashCode.Include
     @ToString.Include
     private UserTestResult userTestResult;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Fetch(FetchMode.JOIN)
+    @JoinColumn(name = "skinTypeId")
+    @EqualsAndHashCode.Include
+    @ToString.Include
+    private SkinType skinType;
 }

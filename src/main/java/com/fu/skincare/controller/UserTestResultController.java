@@ -40,7 +40,7 @@ public class UserTestResultController {
     }
 
     @GetMapping("/")
-    @PreAuthorize(RolePreAuthorize.IS_AUTHENTICATED)
+    // @PreAuthorize(RolePreAuthorize.IS_AUTHENTICATED)
     public ResponseEntity<?> getById(@RequestParam int id) {
         ResponseDTO<UserTestResultResponse> responseDTO = new ResponseDTO<UserTestResultResponse>();
         UserTestResultResponse data = userTestResultService.getById(id);

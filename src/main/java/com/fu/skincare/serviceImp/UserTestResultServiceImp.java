@@ -14,19 +14,24 @@ import com.fu.skincare.constants.message.userTestResult.UserTestResultErrorMessa
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Answer;
 import com.fu.skincare.entity.Question;
+import com.fu.skincare.entity.SkinType;
+import com.fu.skincare.entity.UserSkinType;
 import com.fu.skincare.entity.UserTest;
 import com.fu.skincare.entity.UserTestResult;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.AnswerRepository;
 import com.fu.skincare.repository.QuestionRepository;
+import com.fu.skincare.repository.UserSkinTypeRepository;
 import com.fu.skincare.repository.UserTestRepository;
 import com.fu.skincare.repository.UserTestResultRepository;
 import com.fu.skincare.request.userTest.CreateUserTestRequest;
 import com.fu.skincare.request.userTestResult.CreateUserTestResultRequest;
 import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.skinType.SkinTypeResponse;
 import com.fu.skincare.response.userTest.UserTestResponse;
 import com.fu.skincare.response.userTestResult.UserTestResultResponse;
+import com.fu.skincare.service.UserSkinTypeService;
 import com.fu.skincare.service.UserTestResultService;
 import com.fu.skincare.shared.Utils;
 
@@ -42,6 +47,8 @@ public class UserTestResultServiceImp implements UserTestResultService {
     private final UserTestResultRepository userTestResultRepository;
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
+    private final UserSkinTypeService userSkinTypeService;
+    private final UserSkinTypeRepository userSkinTypeRepository;
 
     @Override
     public UserTestResultResponse createUserTestResult(CreateUserTestResultRequest request) {
@@ -87,6 +94,8 @@ public class UserTestResultServiceImp implements UserTestResultService {
         UserTestResultResponse response = modelMapper.map(userTestResultSaved, UserTestResultResponse.class);
         response.setUser(accountResponse);
         response.setUserTestResponse(userTestResponses);
+        SkinTypeResponse skinTypeResponse = userSkinTypeService.createUserSkinType(userTestResultSaved);
+        response.setSkinType(skinTypeResponse);
         return response;
     }
 
@@ -105,6 +114,10 @@ public class UserTestResultServiceImp implements UserTestResultService {
             userTestResponses.add(userTestResponse);
         }
 
+        UserSkinType userSkinType = userSkinTypeRepository.findFirstByUserTestResult(userTestResult);
+        SkinType skinType = userSkinType.getSkinType();
+        SkinTypeResponse skinTypeResponse = modelMapper.map(skinType, SkinTypeResponse.class);
+        response.setSkinType(skinTypeResponse);
         response.setUser(accountResponse);
         response.setUserTestResponse(userTestResponses);
         return response;

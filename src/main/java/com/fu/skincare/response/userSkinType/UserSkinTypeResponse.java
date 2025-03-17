@@ -1,29 +1,23 @@
-package com.fu.skincare.response.userTestResult;
-
-import java.util.List;
+package com.fu.skincare.response.userSkinType;
 
 import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.skinType.SkinTypeResponse;
-import com.fu.skincare.response.userTest.UserTestResponse;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserTestResultResponse {
+public class UserSkinTypeResponse {
     private int id;
-    private String createdAt;
-    private int totalPoint;
-    private int testTime;
-    private String status;
-    private List<UserTestResponse> userTestResponse;
-    private SkinTypeResponse skinType;
+    private SkinTypeResponse skinTypeResponse;
     private AccountResponse user;
 }

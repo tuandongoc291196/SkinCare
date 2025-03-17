@@ -5,7 +5,8 @@ import org.springframework.stereotype.Repository;
 
 import com.fu.skincare.entity.SkinType;
 
+
 @Repository
 public interface SkinTypeRepository extends JpaRepository<SkinType, Integer> {
-    
+    SkinType findByType(String type);
 }
