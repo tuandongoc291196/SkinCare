@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserTestResultController {
 
-    private UserTestResultService userTestResultService;
+    private final UserTestResultService userTestResultService;
 
     @PostMapping("/create")
     public ResponseEntity<?> create(@Validated @RequestBody CreateUserTestResultRequest request) {
