@@ -72,10 +72,12 @@ public class Utils {
     response.setCategory(modelMapper.map(product.getCategory(), CategoryResponse.class));
     response.setCreatedBy(product.getCreatedBy().getName());
     String names = "";
-    for (ProductSkinType productSkinType : product.getProductSkinTypes()) {
-      names += productSkinType.getSkinType().getType() + ", ";
+    if (product.getProductSkinTypes().size() != 0) {
+      for (ProductSkinType productSkinType : product.getProductSkinTypes()) {
+        names += productSkinType.getSkinType().getType() + ", ";
+      }
+      response.setSuitableFor(names);
     }
-    response.setSuitableFor(names);
     return response;
 
   }

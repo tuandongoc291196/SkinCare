@@ -97,16 +97,19 @@ public class ProductServiceImp implements ProductService {
 
     Product productSaved = productRepository.save(product);
 
+    List<ProductSkinType> listProductSkinType = new ArrayList<ProductSkinType>();
     if (!listSkinType.isEmpty()) {
       for (SkinType skinType : listSkinType) {
         ProductSkinType productSkinType = ProductSkinType.builder()
             .product(productSaved)
             .skinType(skinType)
             .build();
-        productSkinTypeRepository.save(productSkinType);
+            
+        ProductSkinType productSkinTypeSaved = productSkinTypeRepository.save(productSkinType);
+        listProductSkinType.add(productSkinTypeSaved);
       }
     }
-
+    productSaved.setProductSkinTypes(listProductSkinType);
     ProductResponse response = Utils.convertProduct(productSaved);
     return response;
 
