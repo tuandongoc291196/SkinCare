@@ -112,23 +112,40 @@ public class QuestionServiceImp implements QuestionService {
     public QuestionResponse updateQuestion(UpdateQuestionRequest request) {
         Question question = questionRepository.findById(request.getId())
                 .orElseThrow(() -> new ErrorException(QuestionErrorMessage.QUESTION_NOT_FOUND));
-        
+
         question.setQuestion(request.getQuestion());
         questionRepository.save(question);
         QuestionResponse response = modelMapper.map(question, QuestionResponse.class);
 
         List<AnswerResponse> listAnswerResponses = new ArrayList<>();
 
-        for (AnswerUpdateResquest answer: request.getAnswers()){
+        for (AnswerUpdateResquest answer : request.getAnswers()) {
             Answer answerUpdate = answerRepository.findById(answer.getId()).orElseThrow(
-                () -> new ErrorException(AnswerErrorMessage.ANSWER_NOT_FOUND)
-            );
+                    () -> new ErrorException(AnswerErrorMessage.ANSWER_NOT_FOUND));
 
             answerUpdate.setAnswer(answer.getAnswer());
             answerUpdate.setPoint(answer.getPoint());
 
             answerRepository.save(answerUpdate);
             AnswerResponse answerResponse = modelMapper.map(answerUpdate, AnswerResponse.class);
+            listAnswerResponses.add(answerResponse);
+        }
+        response.setListAnswers(listAnswerResponses);
+        return response;
+    }
+
+    @Override
+    public QuestionResponse updateStatus(int id, String status) {
+        Question question = questionRepository.findById(id).orElseThrow(
+                () -> new ErrorException(QuestionErrorMessage.QUESTION_NOT_FOUND));
+        question.setStatus(status);     
+        questionRepository.save(question);
+        QuestionResponse response = modelMapper.map(question, QuestionResponse.class);
+        List<AnswerResponse> listAnswerResponses = new ArrayList<>();
+        for (Answer answer : question.getAnswers()) {
+            answer.setStatus(status);
+            answerRepository.save(answer);
+            AnswerResponse answerResponse = modelMapper.map(answer, AnswerResponse.class);
             listAnswerResponses.add(answerResponse);
         }
         response.setListAnswers(listAnswerResponses);

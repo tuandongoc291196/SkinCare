@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -61,6 +62,28 @@ public class QuestionController {
         QuestionResponse data = questionService.getQuestionById(id);
         responseDTO.setData(data);
         responseDTO.setMessage(QuestionSuccessMessage.GET_QUESTION_SUCCESS);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @PutMapping("/")
+    @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+    public ResponseEntity<?> activeQuestion(@RequestParam int id) {
+        ResponseDTO<QuestionResponse> responseDTO = new ResponseDTO<QuestionResponse>();
+        QuestionResponse data = questionService.updateStatus(id, Status.ACTIVATED);
+        responseDTO.setData(data);
+        responseDTO.setMessage(QuestionSuccessMessage.ACTIVE_QUESTION_SUCCESS);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @DeleteMapping("/")
+    @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+    public ResponseEntity<?> deleteQuestion(@RequestParam int id) {
+        ResponseDTO<QuestionResponse> responseDTO = new ResponseDTO<QuestionResponse>();
+        QuestionResponse data = questionService.updateStatus(id, Status.DISABLED);
+        responseDTO.setData(data);
+        responseDTO.setMessage(QuestionSuccessMessage.DISABLE_QUESTION_SUCCESS);
         responseDTO.setStatus(Status.SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }

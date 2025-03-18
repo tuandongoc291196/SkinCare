@@ -13,5 +13,7 @@ public interface QuestionService {
 
     public QuestionResponse updateQuestion(UpdateQuestionRequest request);
 
+    public QuestionResponse updateStatus(int id, String status);
+
     public List<QuestionResponse> getAllQuestions(int pageNo, int pageSize, String sortBy, boolean isAscending);
 }
