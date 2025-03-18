@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,6 +18,7 @@ import com.fu.skincare.constants.RolePreAuthorize;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.question.QuestionSuccessMessage;
 import com.fu.skincare.request.question.CreateQuestionRequest;
+import com.fu.skincare.request.question.UpdateQuestionRequest;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.question.QuestionResponse;
@@ -38,6 +40,17 @@ public class QuestionController {
         QuestionResponse data = questionService.createQuestion(request);
         responseDTO.setData(data);
         responseDTO.setMessage(QuestionSuccessMessage.CREATE_QUESTION_SUCCESS);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @PutMapping("/edit/")
+    @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+    public ResponseEntity<?> edit(@Validated @RequestBody UpdateQuestionRequest request) {
+        ResponseDTO<QuestionResponse> responseDTO = new ResponseDTO<QuestionResponse>();
+        QuestionResponse data = questionService.updateQuestion(request);
+        responseDTO.setData(data);
+        responseDTO.setMessage(QuestionSuccessMessage.UPDATE_QUESTION_SUCCESS);
         responseDTO.setStatus(Status.SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }
