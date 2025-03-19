@@ -71,7 +71,7 @@ public class UserTestResultServiceImp implements UserTestResultService {
             Answer answer = answerRepository.findById(createUserTestRequest.getAnswerId()).orElseThrow(
                     () -> new ErrorException(AnswerErrorMessage.ANSWER_NOT_FOUND));
 
-            Question question = questionRepository.findById(createUserTestRequest.getAnswerId()).orElseThrow(
+            Question question = questionRepository.findById(createUserTestRequest.getQuestionId()).orElseThrow(
                     () -> new ErrorException(QuestionErrorMessage.QUESTION_NOT_FOUND));
             UserTest userTest = UserTest.builder()
                     .answer(answer)
