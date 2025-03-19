@@ -59,4 +59,10 @@ public class Staff {
   @ToString.Include
   @JsonIgnore
   private Collection<Product> products;
+
+  @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  @JsonIgnore
+  private Collection<Blog> blogs;
 }
