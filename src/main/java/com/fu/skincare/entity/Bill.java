@@ -54,4 +54,8 @@ public class Bill {
   @ToString.Include
   @JsonIgnore
   private Collection<OrderDetail> orderDetails;
+
+  @OneToMany(mappedBy = "bill", orphanRemoval = true, fetch = FetchType.LAZY)
+  @ToString.Exclude
+  private Collection<Transaction> transactions;
 }
