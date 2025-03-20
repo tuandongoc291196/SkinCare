@@ -22,6 +22,8 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
             "    SUM(total_price) AS total_price\n" + //
             "FROM \n" + //
             "    bill\n" + //
+            "WHERE \n" + //
+            "   status not like 'CANCELED'\n" + //
             "GROUP BY \n" + //
             "    DATE(create_at);", nativeQuery = true)
     List<Object[]> getBillReport();
