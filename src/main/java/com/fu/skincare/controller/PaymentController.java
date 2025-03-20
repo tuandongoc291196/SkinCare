@@ -1,20 +1,24 @@
 package com.fu.skincare.controller;
 
-import com.fu.skincare.constants.Status;
-import com.fu.skincare.constants.message.account.AccountSuccessMessage;
-import com.fu.skincare.response.ResponseDTO;
-import com.fu.skincare.response.account.AccountResponse;
-import com.fu.skincare.service.PaymentService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.fu.skincare.constants.Status;
+import com.fu.skincare.response.ResponseDTO;
+import com.fu.skincare.service.PaymentService;
+
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/payments")
@@ -23,8 +27,10 @@ import java.io.UnsupportedEncodingException;
 public class PaymentController {
     @Autowired
     PaymentService paymentService;
+
     @PostMapping(value = "request")
-    public ResponseEntity<?> requestPayment(HttpServletRequest request, HttpServletResponse response, @RequestParam("billId") int billId) {
+    public ResponseEntity<?> requestPayment(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam("billId") int billId) {
         String paymentURL = paymentService.requestPaymentVNP(request, response, billId);
         ResponseDTO<String> responseDTO = new ResponseDTO<>();
         responseDTO.setData(paymentURL);

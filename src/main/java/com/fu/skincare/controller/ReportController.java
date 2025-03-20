@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.report.ReportSuccessMessage;
 import com.fu.skincare.response.ListResponseDTO;
+import com.fu.skincare.response.ResponseDTO;
 import com.fu.skincare.response.report.OrderDetailReport;
+import com.fu.skincare.response.report.RevenueReportResponse;
 import com.fu.skincare.service.ReportService;
 
 import lombok.RequiredArgsConstructor;
@@ -30,6 +32,16 @@ public class ReportController {
         List<OrderDetailReport> data = reportService.getOrderDetailReport();
         responseDTO.setData(data);
         responseDTO.setMessage(ReportSuccessMessage.ORDER_DETAIL);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @GetMapping("/revenue")
+    public ResponseEntity<?> getRevenueReport() {
+        ResponseDTO<RevenueReportResponse> responseDTO = new ResponseDTO<RevenueReportResponse>();
+        RevenueReportResponse data = reportService.getRevenueReport();
+        responseDTO.setData(data);
+        responseDTO.setMessage(ReportSuccessMessage.REVENUE);
         responseDTO.setStatus(Status.SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }

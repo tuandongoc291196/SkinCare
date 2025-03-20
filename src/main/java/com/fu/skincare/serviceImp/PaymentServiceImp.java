@@ -1,5 +1,25 @@
 package com.fu.skincare.serviceImp;
 
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.fu.skincare.constants.PaymentStatus;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.payments.PaymentConstants;
@@ -11,18 +31,6 @@ import com.fu.skincare.response.transaction.TransactionRepository;
 import com.fu.skincare.service.PaymentService;
 import com.fu.skincare.shared.Utils;
 import com.fu.skincare.shared.VNPayUtil;
-import jdk.jshell.execution.Util;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service
 public class PaymentServiceImp implements PaymentService {
@@ -38,7 +46,7 @@ public class PaymentServiceImp implements PaymentService {
     public String requestPaymentVNP(HttpServletRequest req, HttpServletResponse resp, int billId) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new ErrorException("Bill Id not exist"));
-        if(!bill.getStatus().equals(Status.PENDING)){
+        if (!bill.getStatus().equals(Status.PENDING)) {
             throw new ErrorException("Bill is not in payment process");
         }
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
@@ -52,7 +60,7 @@ public class PaymentServiceImp implements PaymentService {
         vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
         vnp_Params.put("vnp_OrderType", PaymentConstants.VNP_ORDER_TYPE);
 
-        vnp_Params.put("vnp_OrderInfo", billId+"");
+        vnp_Params.put("vnp_OrderInfo", billId + "");
         vnp_Params.put("vnp_Amount", String.valueOf(bill.getTotalPrice() * 100L));
         vnp_Params.put("vnp_ReturnUrl", PaymentConstants.VNP_RETURN_URL);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
@@ -101,7 +109,7 @@ public class PaymentServiceImp implements PaymentService {
     @Transactional
     public void paymentResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String billId = request.getParameter("vnp_OrderInfo");
-        Transaction transaction =  transactionRepository.findByBillId(Integer.parseInt(billId))
+        Transaction transaction = transactionRepository.findByBillId(Integer.parseInt(billId))
                 .orElseThrow(() -> new ErrorException("Transaction not exist"));
         if (!"00".equals(request.getParameter("vnp_ResponseCode"))) {
             transaction.setStatus(PaymentStatus.FAILURE);
@@ -118,7 +126,7 @@ public class PaymentServiceImp implements PaymentService {
         }
     }
 
-    private void createTransaction(Bill bill){
+    private void createTransaction(Bill bill) {
         Transaction transaction = Transaction.builder()
                 .amount(bill.getTotalPrice())
                 .createAt(Utils.formatVNDatetimeNow())
