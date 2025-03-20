@@ -11,7 +11,10 @@ public interface BillService {
 
   public BillResponse getById(int id);
 
+  public BillResponse cancelBill(int id);
+
   public List<BillResponse> getAll(int pageNo, int pageSize, String sortBy, boolean isAscending);
 
-  public List<BillByAccountResponse> getAllByAccountId(int accountId, int pageNo, int pageSize, String sortBy, boolean isAscending);
+  public List<BillByAccountResponse> getAllByAccountId(int accountId, int pageNo, int pageSize, String sortBy,
+      boolean isAscending);
 }

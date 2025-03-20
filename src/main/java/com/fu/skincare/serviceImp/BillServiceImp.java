@@ -150,4 +150,26 @@ public class BillServiceImp implements BillService {
     return responses;
   }
 
+  @Override
+  public BillResponse cancelBill(int id) {
+
+    Bill bill = billRepository.findById(id).orElseThrow(
+        () -> new ErrorException(BillErrorMessage.NOT_FOUND));
+
+    if (!bill.getStatus().equals(Status.PENDING)) {
+      throw new ErrorException(BillErrorMessage.CANCELED);
+    }
+
+    bill.setStatus(Status.CANCELED);
+    for (OrderDetail orderDetail : bill.getOrderDetails()) {
+      productService.updateProductQuantity(orderDetail.getProduct().getId(),
+          orderDetail.getProduct().getQuantity() + orderDetail.getQuantity());
+      orderDetail.setStatus(Status.CANCELED);
+      orderDetailRepository.save(orderDetail);
+    }
+    billRepository.saveAndFlush(bill);
+    return Utils.convertBillResponse(bill);
+
+  }
+
 }

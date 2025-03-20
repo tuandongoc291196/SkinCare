@@ -44,12 +44,22 @@ public class BillController {
     return ResponseEntity.ok().body(responseDTO);
   }
 
+  @PutMapping("/cancel/")
+  public ResponseEntity<?> cancelBill(@RequestParam int id) {
+    ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
+    BillResponse data = billService.cancelBill(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BillSuccessMessage.CANCELED_BILL_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
   @GetMapping("/getAll")
   public ResponseEntity<?> getAllBy(
-          @RequestParam(defaultValue = "0") int pageNo,
-          @RequestParam(defaultValue = "10") int pageSize,
-          @RequestParam(defaultValue = "id") String sortBy,
-          @RequestParam(defaultValue = "true") boolean isAscending) {
+      @RequestParam(defaultValue = "0") int pageNo,
+      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "true") boolean isAscending) {
     ListResponseDTO<BillResponse> responseDTO = new ListResponseDTO<>();
     List<BillResponse> data = billService.getAll(pageNo, pageSize, sortBy, isAscending);
     responseDTO.setData(data);
@@ -60,12 +70,12 @@ public class BillController {
 
   @GetMapping("/getAllByAccount/")
   public ResponseEntity<?> getAllByAccount(@RequestParam int accountId,
-          @RequestParam(defaultValue = "0") int pageNo,
-          @RequestParam(defaultValue = "10") int pageSize,
-          @RequestParam(defaultValue = "id") String sortBy,
-          @RequestParam(defaultValue = "true") boolean isAscending) {
+      @RequestParam(defaultValue = "0") int pageNo,
+      @RequestParam(defaultValue = "10") int pageSize,
+      @RequestParam(defaultValue = "id") String sortBy,
+      @RequestParam(defaultValue = "true") boolean isAscending) {
     ListResponseDTO<BillByAccountResponse> responseDTO = new ListResponseDTO<>();
-    List<BillByAccountResponse> data = billService.getAllByAccountId(accountId,pageNo, pageSize, sortBy, isAscending);
+    List<BillByAccountResponse> data = billService.getAllByAccountId(accountId, pageNo, pageSize, sortBy, isAscending);
     responseDTO.setData(data);
     responseDTO.setMessage(BillSuccessMessage.GET_ALL_BILLS);
     responseDTO.setStatus(Status.SUCCESS);
