@@ -3,6 +3,7 @@ package com.fu.skincare.response.userTestResult;
 import java.util.List;
 
 import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.response.skinType.SkinTypeResponse;
 import com.fu.skincare.response.userTest.UserTestResponse;
 
@@ -24,6 +25,7 @@ public class UserTestResultResponse {
     private int testTime;
     private String status;
     private List<UserTestResponse> userTestResponse;
+    private List<ProductResponse> suitableProducts;
     private SkinTypeResponse skinType;
     private AccountResponse user;
 }

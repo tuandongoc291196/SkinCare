@@ -10,9 +10,11 @@ import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.account.AccountErrorMessage;
 import com.fu.skincare.constants.message.answer.AnswerErrorMessage;
 import com.fu.skincare.constants.message.question.QuestionErrorMessage;
+import com.fu.skincare.constants.message.skinType.SkinTypeErrorMessage;
 import com.fu.skincare.constants.message.userTestResult.UserTestResultErrorMessage;
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Answer;
+import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.entity.Question;
 import com.fu.skincare.entity.SkinType;
 import com.fu.skincare.entity.UserSkinType;
@@ -21,13 +23,16 @@ import com.fu.skincare.entity.UserTestResult;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.AnswerRepository;
+import com.fu.skincare.repository.ProductSkinTypeRepository;
 import com.fu.skincare.repository.QuestionRepository;
+import com.fu.skincare.repository.SkinTypeRepository;
 import com.fu.skincare.repository.UserSkinTypeRepository;
 import com.fu.skincare.repository.UserTestRepository;
 import com.fu.skincare.repository.UserTestResultRepository;
 import com.fu.skincare.request.userTest.CreateUserTestRequest;
 import com.fu.skincare.request.userTestResult.CreateUserTestResultRequest;
 import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.response.skinType.SkinTypeResponse;
 import com.fu.skincare.response.userTest.UserTestResponse;
 import com.fu.skincare.response.userTestResult.UserTestResultResponse;
@@ -49,6 +54,8 @@ public class UserTestResultServiceImp implements UserTestResultService {
     private final AnswerRepository answerRepository;
     private final UserSkinTypeService userSkinTypeService;
     private final UserSkinTypeRepository userSkinTypeRepository;
+    private final SkinTypeRepository skinTypeRepository;
+    private final ProductSkinTypeRepository productSkinTypeRepository;
 
     @Override
     public UserTestResultResponse createUserTestResult(CreateUserTestResultRequest request) {
@@ -95,6 +102,16 @@ public class UserTestResultServiceImp implements UserTestResultService {
         response.setUser(accountResponse);
         response.setUserTestResponse(userTestResponses);
         SkinTypeResponse skinTypeResponse = userSkinTypeService.createUserSkinType(userTestResultSaved);
+        SkinType skinType = skinTypeRepository.findById(skinTypeResponse.getId()).orElseThrow(
+                () -> new ErrorException(SkinTypeErrorMessage.NOT_FOUND));
+
+        List<ProductSkinType> productSkinTypes = productSkinTypeRepository.findBySkinType(skinType);
+        List<ProductResponse> suitableProducts = new ArrayList<>();
+        for (ProductSkinType productSkinType : productSkinTypes) {
+            ProductResponse productResponse = Utils.convertProduct(productSkinType.getProduct());
+            suitableProducts.add(productResponse);
+        }
+        response.setSuitableProducts(suitableProducts);
         response.setSkinType(skinTypeResponse);
         return response;
     }
@@ -109,13 +126,20 @@ public class UserTestResultServiceImp implements UserTestResultService {
         AccountResponse accountResponse = modelMapper.map(userTestResult.getAccount(), AccountResponse.class);
         List<UserTestResponse> userTestResponses = new ArrayList<>();
 
-        for (UserTest userTest : userTestResult.getUserTests()){
+        for (UserTest userTest : userTestResult.getUserTests()) {
             UserTestResponse userTestResponse = modelMapper.map(userTest, UserTestResponse.class);
             userTestResponses.add(userTestResponse);
         }
 
         UserSkinType userSkinType = userSkinTypeRepository.findFirstByUserTestResult(userTestResult);
         SkinType skinType = userSkinType.getSkinType();
+        List<ProductSkinType> productSkinTypes = productSkinTypeRepository.findBySkinType(skinType);
+        List<ProductResponse> suitableProducts = new ArrayList<>();
+        for (ProductSkinType productSkinType : productSkinTypes) {
+            ProductResponse productResponse = Utils.convertProduct(productSkinType.getProduct());
+            suitableProducts.add(productResponse);
+        }
+        response.setSuitableProducts(suitableProducts);
         SkinTypeResponse skinTypeResponse = modelMapper.map(skinType, SkinTypeResponse.class);
         response.setSkinType(skinTypeResponse);
         response.setUser(accountResponse);
