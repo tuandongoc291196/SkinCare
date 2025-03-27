@@ -3,9 +3,6 @@ package com.fu.skincare.serviceImp;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fu.skincare.constants.message.bill.BillErrorMessage;
-import com.fu.skincare.exception.EmptyException;
-import com.fu.skincare.response.bill.BillByAccountResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,16 +11,23 @@ import org.springframework.stereotype.Service;
 
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.account.AccountErrorMessage;
+import com.fu.skincare.constants.message.bill.BillErrorMessage;
+import com.fu.skincare.constants.message.billHistory.BillHistorySuccessMessage;
+import com.fu.skincare.constants.message.product.ProductErrorMessage;
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Bill;
+import com.fu.skincare.entity.BillHistory;
 import com.fu.skincare.entity.OrderDetail;
+import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.AccountRepository;
+import com.fu.skincare.repository.BillHistoryRepository;
 import com.fu.skincare.repository.BillRepository;
 import com.fu.skincare.repository.OrderDetailRepository;
 import com.fu.skincare.request.bill.CreateBillRequest;
 import com.fu.skincare.request.orderDetail.CreateOrderDetailRequest;
 import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.bill.BillByAccountResponse;
 import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
 import com.fu.skincare.response.product.ProductResponse;
@@ -41,6 +45,7 @@ public class BillServiceImp implements BillService {
   private final BillRepository billRepository;
   private final AccountRepository accountRepository;
   private final OrderDetailRepository orderDetailRepository;
+  private final BillHistoryRepository billHistoryRepository;
   private final OrderDetailService orderDetailService;
   private final ProductService productService;
   private final ModelMapper modelMapper;
@@ -56,12 +61,13 @@ public class BillServiceImp implements BillService {
       listOrderDetails.add(orderDetail);
       totalPrice += orderDetail.getPrice();
     }
-
+    totalPrice += 25000;
     Bill bill = Bill.builder()
         .account(account)
         .address(request.getAddress())
         .phoneNumber(request.getPhoneNumber())
         .totalPrice(totalPrice)
+        .deliveryFee(25000)
         .status(Status.PENDING)
         .createAt(Utils.formatVNDatetimeNow())
         .build();
@@ -71,14 +77,18 @@ public class BillServiceImp implements BillService {
     listOrderDetails.forEach(orderDetail -> {
       orderDetail.setBill(billSaved);
       OrderDetail orderDetailSaved = orderDetailRepository.save(orderDetail);
-      productService.updateProductQuantity(orderDetailSaved.getProduct().getId(),
-          orderDetailSaved.getProduct().getQuantity() - orderDetailSaved.getQuantity());
       ProductResponse productResponse = Utils.convertProduct(orderDetailSaved.getProduct());
       OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetailSaved, OrderDetailResponse.class);
       orderDetailResponse.setProductResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
-
+    BillHistory billHistory = BillHistory.builder()
+        .bill(bill)
+        .status(Status.PENDING)
+        .description(BillHistorySuccessMessage.CREATE)
+        .createAt(Utils.formatVNDatetimeNow())
+        .build();
+    billHistoryRepository.save(billHistory);
     BillResponse billResponse = modelMapper.map(billSaved, BillResponse.class);
     AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);
     accountResponse.setRoleName(account.getRole().getName());
@@ -151,25 +161,128 @@ public class BillServiceImp implements BillService {
   }
 
   @Override
-  public BillResponse cancelBill(int id) {
+  public BillResponse cancelBill(int id, String reason) {
 
     Bill bill = billRepository.findById(id).orElseThrow(
         () -> new ErrorException(BillErrorMessage.NOT_FOUND));
 
-    if (!bill.getStatus().equals(Status.PENDING)) {
+    if (!bill.getStatus().equals(Status.PENDING) && !bill.getStatus().equals(Status.APPROVED)) {
       throw new ErrorException(BillErrorMessage.CANCELED);
     }
 
     bill.setStatus(Status.CANCELED);
+
+    BillHistory billHistory = BillHistory.builder()
+        .bill(bill)
+        .status(Status.CANCELED)
+        .description(reason)
+        .createAt(Utils.formatVNDatetimeNow())
+        .build();
+
+    billHistoryRepository.save(billHistory);
+
     for (OrderDetail orderDetail : bill.getOrderDetails()) {
-      productService.updateProductQuantity(orderDetail.getProduct().getId(),
-          orderDetail.getProduct().getQuantity() + orderDetail.getQuantity());
+      if (orderDetail.getStatus().equals(Status.APPROVED)) {
+        productService.updateProductQuantity(orderDetail.getProduct().getId(),
+            orderDetail.getProduct().getQuantity() + orderDetail.getQuantity());
+      }
       orderDetail.setStatus(Status.CANCELED);
       orderDetailRepository.save(orderDetail);
     }
     billRepository.saveAndFlush(bill);
     return Utils.convertBillResponse(bill);
 
+  }
+
+  @Override
+  public BillResponse rejectBill(int id, String reason) {
+    Bill bill = billRepository.findById(id).orElseThrow(
+        () -> new ErrorException(BillErrorMessage.NOT_FOUND));
+
+    if (!bill.getStatus().equals(Status.PENDING)) {
+      throw new ErrorException(BillErrorMessage.REJECTED);
+    }
+
+    bill.setStatus(Status.REJECTED);
+
+    BillHistory billHistory = BillHistory.builder()
+        .bill(bill)
+        .status(Status.REJECTED)
+        .description(reason)
+        .createAt(Utils.formatVNDatetimeNow())
+        .build();
+
+    billHistoryRepository.save(billHistory);
+
+    for (OrderDetail orderDetail : bill.getOrderDetails()) {
+      orderDetail.setStatus(Status.REJECTED);
+      orderDetailRepository.save(orderDetail);
+    }
+    billRepository.saveAndFlush(bill);
+    return Utils.convertBillResponse(bill);
+  }
+
+  @Override
+  public BillResponse approvedBill(int id) {
+    Bill bill = billRepository.findById(id).orElseThrow(
+        () -> new ErrorException(BillErrorMessage.NOT_FOUND));
+    if (!bill.getStatus().equals(Status.PENDING)) {
+      throw new ErrorException(BillErrorMessage.APPROVED);
+    }
+
+    for (OrderDetail orderDetail : bill.getOrderDetails()) {
+      if (orderDetail.getProduct().getQuantity() < orderDetail.getQuantity()) {
+        throw new ErrorException(ProductErrorMessage.NOT_ENOUGH);
+      }
+    }
+
+    bill.setStatus(Status.APPROVED);
+
+    BillHistory billHistory = BillHistory.builder()
+        .bill(bill)
+        .status(Status.APPROVED)
+        .description(BillHistorySuccessMessage.APPROVED)
+        .createAt(Utils.formatVNDatetimeNow())
+        .build();
+
+    billHistoryRepository.save(billHistory);
+
+    for (OrderDetail orderDetail : bill.getOrderDetails()) {
+      productService.updateProductQuantity(orderDetail.getProduct().getId(),
+          orderDetail.getProduct().getQuantity() - orderDetail.getQuantity());
+      orderDetail.setStatus(Status.APPROVED);
+      orderDetailRepository.save(orderDetail);
+    }
+    billRepository.saveAndFlush(bill);
+    return Utils.convertBillResponse(bill);
+  }
+
+  @Override
+  public BillResponse doneBill(int id) {
+    Bill bill = billRepository.findById(id).orElseThrow(
+        () -> new ErrorException(BillErrorMessage.NOT_FOUND));
+
+    if (!bill.getStatus().equals(Status.SUCCESS)) {
+      throw new ErrorException(BillErrorMessage.DONE);
+    }
+
+    bill.setStatus(Status.DONE);
+
+    BillHistory billHistory = BillHistory.builder()
+        .bill(bill)
+        .status(Status.DONE)
+        .description(BillHistorySuccessMessage.DONE)
+        .createAt(Utils.formatVNDatetimeNow())
+        .build();
+
+    billHistoryRepository.save(billHistory);
+
+    for (OrderDetail orderDetail : bill.getOrderDetails()) {
+      orderDetail.setStatus(Status.DONE);
+      orderDetailRepository.save(orderDetail);
+    }
+    billRepository.saveAndFlush(bill);
+    return Utils.convertBillResponse(bill);
   }
 
 }

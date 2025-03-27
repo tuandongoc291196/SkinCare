@@ -1,8 +1,5 @@
 package com.fu.skincare.entity;
 
-import java.util.Collection;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -10,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -32,37 +28,19 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
-public class Bill {
+public class BillHistory {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String createAt;
-  private String address;
-  private String phoneNumber;
-  private int deliveryFee;
-  private int totalPrice;
+  private String description;
   private String status;
 
   @ManyToOne(fetch = FetchType.LAZY)
   @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "accountId")
+  @JoinColumn(name = "billId")
   @EqualsAndHashCode.Include
-  @ToString.Include
-  private Account account;
-
-  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-  @EqualsAndHashCode.Include
-  @ToString.Include
   @JsonIgnore
-  private Collection<OrderDetail> orderDetails;
-
-  @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
-  @EqualsAndHashCode.Include
-  @ToString.Include
-  @JsonIgnore
-  private Collection<BillHistory> billHistories;
-
-  @OneToMany(mappedBy = "bill", orphanRemoval = true, fetch = FetchType.LAZY)
-  @ToString.Exclude
-  private Collection<Transaction> transactions;
+  // @ToString.Include
+  private Bill bill;
 }

@@ -52,8 +52,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
   public OrderDetailResponse getOrderDetailById(int id) {
 
     OrderDetail orderDetail = orderDetailRepository.findById(id).orElseThrow(
-      () -> new ErrorException(OrderDetailErrorMessage.ORDER_DETAIL_NOT_FOUND)
-    );
+        () -> new ErrorException(OrderDetailErrorMessage.ORDER_DETAIL_NOT_FOUND));
 
     OrderDetailResponse response = modelMapper.map(orderDetail, OrderDetailResponse.class);
 

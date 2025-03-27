@@ -3,7 +3,11 @@ package com.fu.skincare.constants.message.bill;
 public final class BillSuccessMessage {
   public static final String CREATE_BILL_SUCCESS = "Create bill success";
   public static final String CANCELED_BILL_SUCCESS = "Cancel bill success";
+  public static final String APPROVED_BILL_SUCCESS = "Approved bill success";
+  public static final String REJECTED_BILL_SUCCESS = "Rejected bill success";
+  public static final String DONE_BILL_SUCCESS = "Done bill success";
   public static final String GET_BY_ID = "Get bill by id success";
   public static final String GET_BY_ACCOUNT = "Get bill by account success";
   public static final String GET_ALL_BILLS = "Get all bills success";
+  public static final String GET_BILL_HISTORY = "Get Bill History success";
 }

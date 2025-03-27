@@ -3,9 +3,11 @@ package com.fu.skincare.controller;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.bill.BillByAccountResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import com.fu.skincare.constants.RolePreAuthorize;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.bill.BillSuccessMessage;
 import com.fu.skincare.request.bill.CreateBillRequest;
@@ -45,11 +47,44 @@ public class BillController {
   }
 
   @PutMapping("/cancel/")
-  public ResponseEntity<?> cancelBill(@RequestParam int id) {
+  public ResponseEntity<?> cancelBill(@RequestParam int id, @RequestParam String reason) {
     ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
-    BillResponse data = billService.cancelBill(id);
+    BillResponse data = billService.cancelBill(id, reason);
     responseDTO.setData(data);
     responseDTO.setMessage(BillSuccessMessage.CANCELED_BILL_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/reject/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> rejectBill(@RequestParam int id, @RequestParam String reason) {
+    ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
+    BillResponse data = billService.rejectBill(id, reason);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BillSuccessMessage.REJECTED_BILL_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/approved/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> approvedBill(@RequestParam int id) {
+    ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
+    BillResponse data = billService.approvedBill(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BillSuccessMessage.APPROVED_BILL_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
+  @PutMapping("/done/")
+  @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
+  public ResponseEntity<?> doneBill(@RequestParam int id) {
+    ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
+    BillResponse data = billService.doneBill(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BillSuccessMessage.DONE_BILL_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }

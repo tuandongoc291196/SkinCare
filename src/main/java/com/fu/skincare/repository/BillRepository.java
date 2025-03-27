@@ -24,6 +24,7 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
             "    bill\n" + //
             "WHERE \n" + //
             "   status not like 'CANCELED'\n" + //
+            "   AND status not like 'REJECTED'\n" + //
             "GROUP BY \n" + //
             "    DATE(create_at);", nativeQuery = true)
     List<Object[]> getBillReport();

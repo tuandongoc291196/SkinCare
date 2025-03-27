@@ -23,6 +23,7 @@ public class BillResponse {
   private String createAt;
   private String address;
   private String phoneNumber;
+  private int deliveryFee;
   private int totalPrice;
   private String status;
   private List<OrderDetailResponse> listProducts;

@@ -42,6 +42,7 @@ public class ApplicationSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/report/**",
                         "/question/**",
                         "/orderDetail/**",
+                        "/bill-history/**",
                         "/userTest/**",
                         "/skinType/**",
                         "/blog/**",

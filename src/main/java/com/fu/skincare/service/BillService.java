@@ -11,7 +11,13 @@ public interface BillService {
 
   public BillResponse getById(int id);
 
-  public BillResponse cancelBill(int id);
+  public BillResponse cancelBill(int id, String reason);
+
+  public BillResponse rejectBill(int id, String reason);
+
+  public BillResponse approvedBill(int id);
+
+  public BillResponse doneBill(int id);
 
   public List<BillResponse> getAll(int pageNo, int pageSize, String sortBy, boolean isAscending);
 
