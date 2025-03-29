@@ -2,8 +2,7 @@ package com.fu.skincare.constants.message.payments;
 
 public class PaymentConstants {
     public final static String VNP_PAY_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?";
-    // public final static String VNP_RETURN_URL =
-    // "http://localhost:8080/payments/call-back";
+//     public final static String VNP_RETURN_URL = "http://localhost:8080/payments/call-back";
     public final static String VNP_RETURN_URL = "https://skin-care-api.azurewebsites.net/payments/call-back";
     public final static String VNP_TMN_CODE = "PODT5GPF";
     public final static String VNP_HASH_SECRET = "ERCN2HESH2DZAP4AAC7HY5Q10B5WH448";

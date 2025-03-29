@@ -16,6 +16,9 @@ import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fu.skincare.constants.message.billHistory.BillHistorySuccessMessage;
+import com.fu.skincare.entity.BillHistory;
+import com.fu.skincare.repository.BillHistoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,12 +44,15 @@ public class PaymentServiceImp implements PaymentService {
     @Autowired
     TransactionRepository transactionRepository;
 
+    @Autowired
+    BillHistoryRepository billHistoryRepository;
+
     @Override
     @Transactional
     public String requestPaymentVNP(HttpServletRequest req, HttpServletResponse resp, int billId) {
         Bill bill = billRepository.findById(billId)
                 .orElseThrow(() -> new ErrorException("Bill Id not exist"));
-        if (!bill.getStatus().equals(Status.PENDING)) {
+        if (!bill.getStatus().equals(Status.APPROVED)) {
             throw new ErrorException("Bill is not in payment process");
         }
         String vnp_TxnRef = String.valueOf(System.currentTimeMillis());
@@ -122,6 +128,14 @@ public class PaymentServiceImp implements PaymentService {
                     .orElseThrow(() -> new ErrorException("Bill not exist"));
             bill.setStatus(Status.SUCCESS);
             billRepository.save(bill);
+
+            BillHistory billHistory = BillHistory.builder()
+                    .bill(bill)
+                    .status(Status.SUCCESS)
+                    .description(BillHistorySuccessMessage.PAID)
+                    .createAt(Utils.formatVNDatetimeNow())
+                    .build();
+            billHistoryRepository.save(billHistory);
             response.sendRedirect(String.format(PaymentConstants.VNP_RETURN_CLIENT_URL));
         }
     }
