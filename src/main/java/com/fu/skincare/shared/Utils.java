@@ -12,18 +12,21 @@ import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import com.fu.skincare.entity.*;
-import com.fu.skincare.repository.BillHistoryRepository;
-import com.fu.skincare.response.account.AccountResponse;
-import com.fu.skincare.response.bill.BillResponse;
-import com.fu.skincare.response.orderDetail.OrderDetailResponse;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 
+import com.fu.skincare.entity.Account;
+import com.fu.skincare.entity.Bill;
+import com.fu.skincare.entity.BillHistory;
+import com.fu.skincare.entity.Product;
+import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.jwt.JwtConfig;
+import com.fu.skincare.response.account.AccountResponse;
+import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
+import com.fu.skincare.response.orderDetail.OrderDetailResponse;
 import com.fu.skincare.response.product.ProductResponse;
 
 import io.jsonwebtoken.Jwts;
@@ -36,7 +39,6 @@ import lombok.experimental.FieldDefaults;
 public class Utils {
 
   private static final ModelMapper modelMapper = new ModelMapper();
-  private static BillHistoryRepository billHistoryRepository;
 
   public static String formatVNDatetimeNow() {
     ZoneId vietnamZoneId = ZoneId.of("Asia/Ho_Chi_Minh");
@@ -90,11 +92,15 @@ public class Utils {
       orderDetailResponse.setProductResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
-    Optional<BillHistory> billHistory = billHistoryRepository.findLastByBill(bill);
     BillResponse billResponse = modelMapper.map(bill, BillResponse.class);
+    if (!bill.getBillHistories().isEmpty()) {
+      Optional<BillHistory> billHistory = bill.getBillHistories().stream()
+          .skip(bill.getBillHistories().size() - 1)
+          .findFirst();
+      billHistory.ifPresent(history -> billResponse.setReason(history.getDescription()));
+    }
     AccountResponse accountResponse = modelMapper.map(bill.getAccount(), AccountResponse.class);
     accountResponse.setRoleName(bill.getAccount().getRole().getName());
-      billHistory.ifPresent(history -> billResponse.setReason(history.getDescription()));
     billResponse.setAccount(accountResponse);
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;
