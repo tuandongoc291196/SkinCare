@@ -7,11 +7,13 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.crypto.SecretKey;
 
-import com.fu.skincare.entity.Bill;
+import com.fu.skincare.entity.*;
+import com.fu.skincare.repository.BillHistoryRepository;
 import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
@@ -19,9 +21,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 
-import com.fu.skincare.entity.Account;
-import com.fu.skincare.entity.Product;
-import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.jwt.JwtConfig;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
@@ -37,6 +36,7 @@ import lombok.experimental.FieldDefaults;
 public class Utils {
 
   private static final ModelMapper modelMapper = new ModelMapper();
+  private static BillHistoryRepository billHistoryRepository;
 
   public static String formatVNDatetimeNow() {
     ZoneId vietnamZoneId = ZoneId.of("Asia/Ho_Chi_Minh");
@@ -72,7 +72,7 @@ public class Utils {
     response.setCategory(modelMapper.map(product.getCategory(), CategoryResponse.class));
     response.setCreatedBy(product.getCreatedBy().getName());
     String names = "";
-    if (product.getProductSkinTypes().size() != 0) {
+    if (!product.getProductSkinTypes().isEmpty()) {
       for (ProductSkinType productSkinType : product.getProductSkinTypes()) {
         names += productSkinType.getSkinType().getType() + ", ";
       }
@@ -90,10 +90,11 @@ public class Utils {
       orderDetailResponse.setProductResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
-
+    Optional<BillHistory> billHistory = billHistoryRepository.findLastByBill(bill);
     BillResponse billResponse = modelMapper.map(bill, BillResponse.class);
     AccountResponse accountResponse = modelMapper.map(bill.getAccount(), AccountResponse.class);
     accountResponse.setRoleName(bill.getAccount().getRole().getName());
+      billHistory.ifPresent(history -> billResponse.setReason(history.getDescription()));
     billResponse.setAccount(accountResponse);
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;

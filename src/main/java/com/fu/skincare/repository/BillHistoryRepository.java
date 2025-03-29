@@ -1,6 +1,7 @@
 package com.fu.skincare.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
@@ -11,4 +12,5 @@ import com.fu.skincare.entity.BillHistory;
 @Repository
 public interface BillHistoryRepository extends JpaRepository<BillHistory, Integer> {
   List<BillHistory> findByBill(Bill bill);
+  Optional<BillHistory> findLastByBill(Bill bill);
 }

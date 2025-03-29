@@ -26,6 +26,7 @@ public class BillResponse {
   private int deliveryFee;
   private int totalPrice;
   private String status;
+  private String reason;
   private List<OrderDetailResponse> listProducts;
   private AccountResponse account;
 }
