@@ -45,8 +45,8 @@ public class UserSkinTypeServiceImp implements UserSkinTypeService {
             throw new ErrorException(UserTestResultErrorMessage.NOT_FOUND);
         }
 
-        if (userTestResult.getTotalPoint() <= 20) {
-            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.DRY);
+        if (userTestResult.getTotalPoint() < 10) {
+            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.NORMALLY);
             UserSkinType userSkinType = UserSkinType.builder()
                     .skinType(skinType)
                     .userTestResult(userTestResult)
@@ -56,18 +56,7 @@ public class UserSkinTypeServiceImp implements UserSkinTypeService {
 
             userSkinTypeRepository.save(userSkinType);
             return modelMapper.map(skinType, SkinTypeResponse.class);
-        } else if (userTestResult.getTotalPoint() <= 40) {
-            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.OIL);
-            UserSkinType userSkinType = UserSkinType.builder()
-                    .skinType(skinType)
-                    .userTestResult(userTestResult)
-                    .createdAt(Utils.formatVNDatetimeNow())
-                    .status(Status.ACTIVATED)
-                    .account(userTestResult.getAccount()).build();
-
-            userSkinTypeRepository.save(userSkinType);
-            return modelMapper.map(skinType, SkinTypeResponse.class);
-        } else if (userTestResult.getTotalPoint() <= 60) {
+        } else if (userTestResult.getTotalPoint() < 20) {
             SkinType skinType = skinTypeRepository.findByType(SkinTypeName.COMBINATION);
             UserSkinType userSkinType = UserSkinType.builder()
                     .skinType(skinType)
@@ -78,8 +67,19 @@ public class UserSkinTypeServiceImp implements UserSkinTypeService {
 
             userSkinTypeRepository.save(userSkinType);
             return modelMapper.map(skinType, SkinTypeResponse.class);
+        } else if (userTestResult.getTotalPoint() < 30) {
+            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.OIL);
+            UserSkinType userSkinType = UserSkinType.builder()
+                    .skinType(skinType)
+                    .userTestResult(userTestResult)
+                    .createdAt(Utils.formatVNDatetimeNow())
+                    .status(Status.ACTIVATED)
+                    .account(userTestResult.getAccount()).build();
+
+            userSkinTypeRepository.save(userSkinType);
+            return modelMapper.map(skinType, SkinTypeResponse.class);
         } else {
-            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.SENSITIVE);
+            SkinType skinType = skinTypeRepository.findByType(SkinTypeName.DRY);
             UserSkinType userSkinType = UserSkinType.builder()
                     .skinType(skinType)
                     .userTestResult(userTestResult)
