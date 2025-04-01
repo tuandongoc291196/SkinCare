@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Bill;
+import com.fu.skincare.response.bill.BillStatusReport;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, Integer> {
@@ -28,4 +29,16 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
             "GROUP BY \n" + //
             "    DATE(create_at);", nativeQuery = true)
     List<Object[]> getBillReport();
+
+    @Query(value = "SELECT \n" + //
+            "    COALESCE(count(distinct id), 0) AS total,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'PENDING' THEN 1 ELSE 0 END), 0) AS pending,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'APPROVED' THEN 1 ELSE 0 END), 0) AS approved,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'REJECTED' THEN 1 ELSE 0 END), 0) AS rejected,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'CANCELED' THEN 1 ELSE 0 END), 0) AS canceled,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'SUCCESS' THEN 1 ELSE 0 END), 0) AS success,\n" + //
+            "    COALESCE(SUM(CASE WHEN status = 'DONE' THEN 1 ELSE 0 END), 0) AS done\n" + //
+            "FROM \n" + //
+            "    bill;", nativeQuery = true)
+    BillStatusReport getBillStatusReport();
 }
