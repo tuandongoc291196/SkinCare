@@ -62,4 +62,14 @@ public class UserTestResultController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
+    @GetMapping("/getAll/")
+    public ResponseEntity<?> getAll() {
+        ListResponseDTO<UserTestHistoryResponse> responseDTO = new ListResponseDTO<UserTestHistoryResponse>();
+        List<UserTestHistoryResponse> data = userTestResultService.getAll();
+        responseDTO.setData(data);
+        responseDTO.setMessage(UserTestResultSuccessMessage.GET_ALL);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
 }

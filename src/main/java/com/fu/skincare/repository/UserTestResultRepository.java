@@ -15,4 +15,6 @@ public interface UserTestResultRepository extends JpaRepository<UserTestResult, 
 
     List<UserTestResult> findByAccountOrderByIdDesc(Account account);
 
+    List<UserTestResult> findAllByOrderByIdDesc();
+
 }

@@ -148,9 +148,28 @@ public class UserTestResultServiceImp implements UserTestResultService {
     }
 
     @Override
-    public List<UserTestResultResponse> getAll() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAll'");
+    public List<UserTestHistoryResponse> getAll() {
+        List<UserTestResult> userTestResults = userTestResultRepository.findAllByOrderByIdDesc();
+
+        if (userTestResults.isEmpty()) {
+            throw new ErrorException(UserTestResultErrorMessage.EMPTY);
+        }
+
+        List<UserTestHistoryResponse> userTestHistoryResponses = new ArrayList<>();
+        for (UserTestResult userTestResult : userTestResults) {
+            AccountResponse accountResponse = modelMapper.map(userTestResult.getAccount(), AccountResponse.class);
+            accountResponse.setRoleName(userTestResult.getAccount().getRole().getName());
+            UserTestHistoryResponse userTestHistoryResponse = modelMapper.map(userTestResult,
+                    UserTestHistoryResponse.class);
+
+            SkinType skinType = userTestResult.getUserSkinTypes().stream().findFirst().get().getSkinType();
+            SkinTypeResponse skinTypeResponse = modelMapper.map(skinType, SkinTypeResponse.class);
+            userTestHistoryResponse.setSkinType(skinTypeResponse);
+            userTestHistoryResponse.setUser(accountResponse);
+            userTestHistoryResponses.add(userTestHistoryResponse);
+        }
+
+        return userTestHistoryResponses;
     }
 
     @Override
@@ -169,9 +188,11 @@ public class UserTestResultServiceImp implements UserTestResultService {
         for (UserTestResult userTestResult : userTestResults) {
             UserTestHistoryResponse userTestHistoryResponse = modelMapper.map(userTestResult,
                     UserTestHistoryResponse.class);
-
+            AccountResponse accountResponse = modelMapper.map(userTestResult.getAccount(), AccountResponse.class);
+            accountResponse.setRoleName(userTestResult.getAccount().getRole().getName());
             SkinType skinType = userTestResult.getUserSkinTypes().stream().findFirst().get().getSkinType();
             SkinTypeResponse skinTypeResponse = modelMapper.map(skinType, SkinTypeResponse.class);
+            userTestHistoryResponse.setUser(accountResponse);
             userTestHistoryResponse.setSkinType(skinTypeResponse);
             userTestHistoryResponses.add(userTestHistoryResponse);
         }

@@ -11,7 +11,7 @@ public interface UserTestResultService {
 
     public UserTestResultResponse getById(int id);
 
-    public List<UserTestResultResponse> getAll();
+    public List<UserTestHistoryResponse> getAll();
 
     public List<UserTestHistoryResponse> getAllByUser(int accountId);
 }

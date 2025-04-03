@@ -1,5 +1,6 @@
 package com.fu.skincare.response.userTestResult;
 
+import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.skinType.SkinTypeResponse;
 
 import lombok.AllArgsConstructor;
@@ -22,4 +23,5 @@ public class UserTestHistoryResponse {
   private int testTime;
   private String status;
   private SkinTypeResponse skinType;
+  private AccountResponse user;
 }
