@@ -26,7 +26,6 @@ import com.fu.skincare.repository.AnswerRepository;
 import com.fu.skincare.repository.ProductSkinTypeRepository;
 import com.fu.skincare.repository.QuestionRepository;
 import com.fu.skincare.repository.SkinTypeRepository;
-import com.fu.skincare.repository.UserSkinTypeRepository;
 import com.fu.skincare.repository.UserTestRepository;
 import com.fu.skincare.repository.UserTestResultRepository;
 import com.fu.skincare.request.userTest.CreateUserTestRequest;
@@ -35,6 +34,7 @@ import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.response.skinType.SkinTypeResponse;
 import com.fu.skincare.response.userTest.UserTestResponse;
+import com.fu.skincare.response.userTestResult.UserTestHistoryResponse;
 import com.fu.skincare.response.userTestResult.UserTestResultResponse;
 import com.fu.skincare.service.UserSkinTypeService;
 import com.fu.skincare.service.UserTestResultService;
@@ -53,7 +53,6 @@ public class UserTestResultServiceImp implements UserTestResultService {
     private final QuestionRepository questionRepository;
     private final AnswerRepository answerRepository;
     private final UserSkinTypeService userSkinTypeService;
-    private final UserSkinTypeRepository userSkinTypeRepository;
     private final SkinTypeRepository skinTypeRepository;
     private final ProductSkinTypeRepository productSkinTypeRepository;
 
@@ -131,7 +130,8 @@ public class UserTestResultServiceImp implements UserTestResultService {
             userTestResponses.add(userTestResponse);
         }
 
-        UserSkinType userSkinType = userSkinTypeRepository.findFirstByUserTestResult(userTestResult);
+        UserSkinType userSkinType = userTestResult.getUserSkinTypes().stream().findFirst().orElseThrow(
+                () -> new ErrorException(UserTestResultErrorMessage.NOT_FOUND));
         SkinType skinType = userSkinType.getSkinType();
         List<ProductSkinType> productSkinTypes = productSkinTypeRepository.findBySkinType(skinType);
         List<ProductResponse> suitableProducts = new ArrayList<>();
@@ -154,9 +154,29 @@ public class UserTestResultServiceImp implements UserTestResultService {
     }
 
     @Override
-    public List<UserTestResultResponse> getAllByUser(int accountId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllByUser'");
+    public List<UserTestHistoryResponse> getAllByUser(int accountId) {
+
+        Account account = accountRepository.findById(accountId).orElseThrow(
+                () -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_FOUND));
+
+        List<UserTestResult> userTestResults = userTestResultRepository.findByAccountOrderByIdDesc(account);
+
+        if (userTestResults.isEmpty()) {
+            throw new ErrorException(UserTestResultErrorMessage.EMPTY);
+        }
+
+        List<UserTestHistoryResponse> userTestHistoryResponses = new ArrayList<>();
+        for (UserTestResult userTestResult : userTestResults) {
+            UserTestHistoryResponse userTestHistoryResponse = modelMapper.map(userTestResult,
+                    UserTestHistoryResponse.class);
+
+            SkinType skinType = userTestResult.getUserSkinTypes().stream().findFirst().get().getSkinType();
+            SkinTypeResponse skinTypeResponse = modelMapper.map(skinType, SkinTypeResponse.class);
+            userTestHistoryResponse.setSkinType(skinTypeResponse);
+            userTestHistoryResponses.add(userTestHistoryResponse);
+        }
+
+        return userTestHistoryResponses;
     }
 
 }

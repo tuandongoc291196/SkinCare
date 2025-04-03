@@ -1,5 +1,7 @@
 package com.fu.skincare.controller;
 
+import java.util.List;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -13,7 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.userTestResult.UserTestResultSuccessMessage;
 import com.fu.skincare.request.userTestResult.CreateUserTestResultRequest;
+import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
+import com.fu.skincare.response.userTestResult.UserTestHistoryResponse;
 import com.fu.skincare.response.userTestResult.UserTestResultResponse;
 import com.fu.skincare.service.UserTestResultService;
 
@@ -44,6 +48,16 @@ public class UserTestResultController {
         UserTestResultResponse data = userTestResultService.getById(id);
         responseDTO.setData(data);
         responseDTO.setMessage(UserTestResultSuccessMessage.GET_BY_ID);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
+    @GetMapping("/user/")
+    public ResponseEntity<?> getByUser(@RequestParam int id) {
+        ListResponseDTO<UserTestHistoryResponse> responseDTO = new ListResponseDTO<UserTestHistoryResponse>();
+        List<UserTestHistoryResponse> data = userTestResultService.getAllByUser(id);
+        responseDTO.setData(data);
+        responseDTO.setMessage(UserTestResultSuccessMessage.GET_ALL_BY_USER);
         responseDTO.setStatus(Status.SUCCESS);
         return ResponseEntity.ok().body(responseDTO);
     }
