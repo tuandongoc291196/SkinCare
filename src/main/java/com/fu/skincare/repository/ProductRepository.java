@@ -28,7 +28,9 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
       "    AND (cb.brand_id = COALESCE(NULLIF(:brandId, 0), cb.brand_id))\n" + //
       "    AND (cb.category_id = COALESCE(NULLIF(:categoryId, 0), cb.category_id))\n" + //
       "    AND (pst.skin_type_id = COALESCE(NULLIF(:skinTypeId, 0), pst.skin_type_id))\n" + //
-      "    AND p.status = 'ACTIVATED' ", nativeQuery = true)
+      "    AND p.status = 'ACTIVATED'\n" + 
+      "    order by p.id desc;"
+      , nativeQuery = true)
   List<Product> filterProduct(String name, int minPrice, int maxPrice, int brandId, int categoryId, int skinTypeId);
 
   @Query(value = "SELECT COALESCE(SUM(od.quantity), 0) AS noOfSold\n" + //
