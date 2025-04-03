@@ -66,6 +66,16 @@ public class QuestionController {
         return ResponseEntity.ok().body(responseDTO);
     }
 
+    @GetMapping("/getRandom")
+    public ResponseEntity<?> getRandom() {
+        ListResponseDTO<QuestionResponse> responseDTO = new ListResponseDTO<QuestionResponse>();
+        List<QuestionResponse> data = questionService.getRandomQuestions();
+        responseDTO.setData(data);
+        responseDTO.setMessage(QuestionSuccessMessage.GET_QUESTION_SUCCESS);
+        responseDTO.setStatus(Status.SUCCESS);
+        return ResponseEntity.ok().body(responseDTO);
+    }
+
     @PutMapping("/")
     @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
     public ResponseEntity<?> activeQuestion(@RequestParam int id) {

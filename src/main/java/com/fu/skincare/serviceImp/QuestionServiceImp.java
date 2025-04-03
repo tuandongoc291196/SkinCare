@@ -138,7 +138,7 @@ public class QuestionServiceImp implements QuestionService {
     public QuestionResponse updateStatus(int id, String status) {
         Question question = questionRepository.findById(id).orElseThrow(
                 () -> new ErrorException(QuestionErrorMessage.QUESTION_NOT_FOUND));
-        question.setStatus(status);     
+        question.setStatus(status);
         questionRepository.save(question);
         QuestionResponse response = modelMapper.map(question, QuestionResponse.class);
         List<AnswerResponse> listAnswerResponses = new ArrayList<>();
@@ -149,6 +149,26 @@ public class QuestionServiceImp implements QuestionService {
             listAnswerResponses.add(answerResponse);
         }
         response.setListAnswers(listAnswerResponses);
+        return response;
+    }
+
+    @Override
+    public List<QuestionResponse> getRandomQuestions() {
+        List<Question> listQuestions = questionRepository.getQuestion();
+        if (listQuestions.isEmpty()) {
+            throw new EmptyException(QuestionErrorMessage.EMPTY);
+        }
+        List<QuestionResponse> response = new ArrayList<>();
+        for (Question question : listQuestions) {
+            QuestionResponse questionResponse = modelMapper.map(question, QuestionResponse.class);
+            List<AnswerResponse> listAnswerResponses = new ArrayList<>();
+            for (Answer answer : question.getAnswers()) {
+                AnswerResponse answerResponse = modelMapper.map(answer, AnswerResponse.class);
+                listAnswerResponses.add(answerResponse);
+            }
+            questionResponse.setListAnswers(listAnswerResponses);
+            response.add(questionResponse);
+        }
         return response;
     }
 
