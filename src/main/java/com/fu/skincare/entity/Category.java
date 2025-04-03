@@ -42,6 +42,6 @@ public class Category {
   @EqualsAndHashCode.Include
   @ToString.Include
   @JsonIgnore
-  private Collection<Product> products;
+  private Collection<CategoryBrand> categoryBrands;
 
 }

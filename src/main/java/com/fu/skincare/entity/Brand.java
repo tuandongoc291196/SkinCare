@@ -38,5 +38,6 @@ public class Brand {
   @EqualsAndHashCode.Include
   @ToString.Include
   @JsonIgnore
-  private Collection<Product> products;
+  private Collection<CategoryBrand> categoryBrands;
+  
 }

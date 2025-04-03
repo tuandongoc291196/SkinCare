@@ -20,6 +20,7 @@ import com.fu.skincare.constants.message.staff.StaffErrorMessage;
 import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Brand;
 import com.fu.skincare.entity.Category;
+import com.fu.skincare.entity.CategoryBrand;
 import com.fu.skincare.entity.Product;
 import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.entity.SkinType;
@@ -27,6 +28,7 @@ import com.fu.skincare.exception.EmptyException;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.BrandRepository;
+import com.fu.skincare.repository.CategoryBrandRepository;
 import com.fu.skincare.repository.CategoryRepository;
 import com.fu.skincare.repository.ProductRepository;
 import com.fu.skincare.repository.ProductSkinTypeRepository;
@@ -56,6 +58,7 @@ public class ProductServiceImp implements ProductService {
   private final ModelMapper modelMapper;
   private final SkinTypeRepository skinTypeRepository;
   private final ProductSkinTypeRepository productSkinTypeRepository;
+  private final CategoryBrandRepository categoryBrandRepository;
 
   @Override
   public ProductResponse createProduct(CreateProductRequest request) {
@@ -80,15 +83,23 @@ public class ProductServiceImp implements ProductService {
           .orElseThrow(() -> new ErrorException(SkinTypeErrorMessage.NOT_FOUND));
       listSkinType.add(skinTypeEntity);
     }
-
+    CategoryBrand categoryBrand = categoryBrandRepository.findByCategoryAndBrand(category, brand);
+    if (categoryBrand == null) {
+      CategoryBrand categoryBrandEntity = CategoryBrand.builder()
+          .category(category)
+          .brand(brand)
+          .createdAt(Utils.formatVNDatetimeNow())
+          .status(Status.ACTIVATED)
+          .build();
+      categoryBrand = categoryBrandRepository.save(categoryBrandEntity);
+    }
     Product product = Product.builder()
         .name(request.getName())
         .description(request.getDescription())
         .image(request.getImage())
         .price(request.getPrice())
         .quantity(request.getQuantity())
-        .brand(brand)
-        .category(category)
+        .categoryBrand(categoryBrand)
         .createdAt(Utils.formatVNDatetimeNow())
         .status(Status.ACTIVATED)
         .createdBy(account.getStaffs().stream().findFirst()
@@ -104,7 +115,7 @@ public class ProductServiceImp implements ProductService {
             .product(productSaved)
             .skinType(skinType)
             .build();
-            
+
         ProductSkinType productSkinTypeSaved = productSkinTypeRepository.save(productSkinType);
         listProductSkinType.add(productSkinTypeSaved);
       }
@@ -188,15 +199,15 @@ public class ProductServiceImp implements ProductService {
 
     Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ErrorException(BrandErrorMessage.NOT_FOUND));
 
-    Page<Product> products;
+    Page<Product> products = null;
 
-    if (isAscending) {
-      products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
-          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
-    } else {
-      products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
-          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
-    }
+    // if (isAscending) {
+    //   products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
+    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
+    // } else {
+    //   products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
+    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
+    // }
 
     if (products.isEmpty()) {
       throw new EmptyException(ProductErrorMessage.EMPTY);
@@ -223,15 +234,15 @@ public class ProductServiceImp implements ProductService {
     Category category = categoryRepository.findById(categoryId)
         .orElseThrow(() -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
 
-    Page<Product> products;
+    Page<Product> products = null;
 
-    if (isAscending) {
-      products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
-          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
-    } else {
-      products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
-          PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
-    }
+    // if (isAscending) {
+    //   products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
+    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
+    // } else {
+    //   products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
+    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
+    // }
 
     if (products.isEmpty()) {
       throw new EmptyException(ProductErrorMessage.EMPTY);
@@ -261,13 +272,23 @@ public class ProductServiceImp implements ProductService {
 
     Brand brand = brandRepository.findById(request.getBrandId())
         .orElseThrow(() -> new ErrorException(BrandErrorMessage.NOT_FOUND));
+
+    CategoryBrand categoryBrand = categoryBrandRepository.findByCategoryAndBrand(category, brand);
+    if (categoryBrand == null) {
+      CategoryBrand categoryBrandEntity = CategoryBrand.builder()
+          .category(category)
+          .brand(brand)
+          .createdAt(Utils.formatVNDatetimeNow())
+          .status(Status.ACTIVATED)
+          .build();
+      categoryBrand = categoryBrandRepository.save(categoryBrandEntity);
+    }
     product.setName(request.getName());
     product.setDescription(request.getDescription());
     product.setImage(request.getImage());
     product.setPrice(request.getPrice());
     product.setQuantity(request.getQuantity());
-    product.setCategory(category);
-    product.setBrand(brand);
+    product.setCategoryBrand(categoryBrand);
 
     Product productSaved = productRepository.save(product);
     ProductResponse response = Utils.convertProduct(productSaved);

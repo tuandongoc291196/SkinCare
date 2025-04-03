@@ -70,8 +70,8 @@ public class Utils {
 
   public static ProductResponse convertProduct(Product product) {
     ProductResponse response = modelMapper.map(product, ProductResponse.class);
-    response.setBrand(modelMapper.map(product.getBrand(), BrandResponse.class));
-    response.setCategory(modelMapper.map(product.getCategory(), CategoryResponse.class));
+    response.setBrand(modelMapper.map(product.getCategoryBrand().getBrand(), BrandResponse.class));
+    response.setCategory(modelMapper.map(product.getCategoryBrand().getCategory(), CategoryResponse.class));
     response.setCreatedBy(product.getCreatedBy().getName());
     String names = "";
     if (!product.getProductSkinTypes().isEmpty()) {

@@ -50,25 +50,18 @@ public class Product {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "categoryId")
-  @EqualsAndHashCode.Include
-  @ToString.Include
-  private Category category;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "brandId")
-  @EqualsAndHashCode.Include
-  @ToString.Include
-  private Brand brand;
-
-  @ManyToOne(fetch = FetchType.LAZY)
-  @Fetch(FetchMode.JOIN)
   @JoinColumn(name = "staffId")
   @EqualsAndHashCode.Include
   @ToString.Include
   private Staff createdBy;
 
+  @ManyToOne(fetch = FetchType.LAZY)
+  @Fetch(FetchMode.JOIN)
+  @JoinColumn(name = "categoryBrandId")
+  @EqualsAndHashCode.Include
+  @ToString.Include
+  private CategoryBrand categoryBrand;
+  
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
   @EqualsAndHashCode.Include
   @ToString.Include
