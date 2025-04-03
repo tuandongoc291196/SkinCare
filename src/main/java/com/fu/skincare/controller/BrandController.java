@@ -66,6 +66,16 @@ public class BrandController {
     return ResponseEntity.ok().body(responseDTO);
   }
 
+  @GetMapping("/category/")
+  public ResponseEntity<?> getByCategory(@Validated @RequestParam int id) {
+    ListResponseDTO<BrandResponse> responseDTO = new ListResponseDTO<BrandResponse>();
+    List<BrandResponse> data = brandService.getBrandsByCategory(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(BrandSuccessMessage.GET_ALL_SUCCESS);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
   @PutMapping("/update/")
   public ResponseEntity<?> update(@Validated @RequestBody UpdateBrandRequest request) {
     ResponseDTO<BrandResponse> responseDTO = new ResponseDTO<BrandResponse>();

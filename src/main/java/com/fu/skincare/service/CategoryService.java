@@ -13,5 +13,7 @@ public interface CategoryService {
 
   public CategoryResponse updateCategory(UpdateCategoryRequest request);
 
+  List<CategoryResponse> getAllByBrand(int brandId);
+
   public List<CategoryResponse> getAllCategory();
 }

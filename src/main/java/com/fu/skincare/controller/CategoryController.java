@@ -66,6 +66,16 @@ public class CategoryController {
     return ResponseEntity.ok().body(responseDTO);
   }
 
+  @GetMapping("/brand/")
+  public ResponseEntity<?> getByBrand(@Validated @RequestParam int id) {
+    ListResponseDTO<CategoryResponse> responseDTO = new ListResponseDTO<CategoryResponse>();
+    List<CategoryResponse> data = categoryService.getAllByBrand(id);
+    responseDTO.setData(data);
+    responseDTO.setMessage(CategorySuccessMessage.GET_ALL_CATEGORY_SUCCESSFULLY);
+    responseDTO.setStatus(Status.SUCCESS);
+    return ResponseEntity.ok().body(responseDTO);
+  }
+
   @PutMapping("/edit/")
   @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
   public ResponseEntity<?> update(@Validated @RequestBody UpdateCategoryRequest request) {
