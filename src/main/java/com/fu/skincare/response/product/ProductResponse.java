@@ -20,9 +20,14 @@ public class ProductResponse {
   private int id;
   private String name;
   private String description;
+  private String ingredient;
+  private String effect;
+  private String instructionManual;
+  private String productSpecifications;
   private String image;
   private int price;
   private int quantity;
+  private int noOfSold;
   private String status;
   private String createdAt;
   private CategoryResponse category;

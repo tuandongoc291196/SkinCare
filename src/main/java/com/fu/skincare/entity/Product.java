@@ -43,6 +43,14 @@ public class Product {
   private String description;
   @Column(columnDefinition = "TEXT")
   private String image;
+  @Column(columnDefinition = "TEXT")
+  private String ingredient;
+  @Column(columnDefinition = "TEXT")
+  private String effect;
+  @Column(columnDefinition = "TEXT")
+  private String instructionManual;
+  @Column(columnDefinition = "TEXT")
+  private String productSpecifications;
   private int price;
   private int quantity;
   private String status;

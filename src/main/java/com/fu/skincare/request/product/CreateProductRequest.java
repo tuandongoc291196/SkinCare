@@ -29,6 +29,10 @@ public class CreateProductRequest {
   @Min(value = 0, message = "Quantity must be greater than 0")
   private int quantity;
   private int categoryId;
+  private String ingredient;
+  private String effect;
+  private String instructionManual;
+  private String productSpecifications;
   private int brandId;
   private int accountId;
   private List<Integer> skinTypeId;

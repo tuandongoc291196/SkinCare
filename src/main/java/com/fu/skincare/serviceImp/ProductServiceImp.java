@@ -3,7 +3,6 @@ package com.fu.skincare.serviceImp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -36,11 +35,6 @@ import com.fu.skincare.repository.SkinTypeRepository;
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
 import com.fu.skincare.request.product.UpdateProductRequest;
-import com.fu.skincare.response.brand.BrandResponse;
-import com.fu.skincare.response.category.CategoryResponse;
-import com.fu.skincare.response.product.ListProductResponse;
-import com.fu.skincare.response.product.ProductByBrandResponse;
-import com.fu.skincare.response.product.ProductByCategoryResponse;
 import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.service.ProductService;
 import com.fu.skincare.shared.Utils;
@@ -55,7 +49,7 @@ public class ProductServiceImp implements ProductService {
   private final BrandRepository brandRepository;
   private final CategoryRepository categoryRepository;
   private final AccountRepository accountRepository;
-  private final ModelMapper modelMapper;
+  // private final ModelMapper modelMapper;
   private final SkinTypeRepository skinTypeRepository;
   private final ProductSkinTypeRepository productSkinTypeRepository;
   private final CategoryBrandRepository categoryBrandRepository;
@@ -100,6 +94,10 @@ public class ProductServiceImp implements ProductService {
         .price(request.getPrice())
         .quantity(request.getQuantity())
         .categoryBrand(categoryBrand)
+        .effect(request.getEffect())
+        .ingredient(request.getIngredient())
+        .instructionManual(request.getInstructionManual())
+        .productSpecifications(request.getProductSpecifications())
         .createdAt(Utils.formatVNDatetimeNow())
         .status(Status.ACTIVATED)
         .createdBy(account.getStaffs().stream().findFirst()
@@ -176,8 +174,8 @@ public class ProductServiceImp implements ProductService {
           .orElseThrow(() -> new EmptyException(ProductErrorMessage.EMPTY));
     }
 
-    List<Product> products = productRepository.filterProduct(request.getCategoryId(), request.getBrandId(),
-        request.getMaxPrice(), request.getMinPrice(), request.getName());
+    List<Product> products = productRepository.filterProduct(request.getName(), request.getMinPrice(),
+        request.getMaxPrice(), request.getBrandId(), request.getCategoryId(), request.getSkinTypeId());
 
     if (products.isEmpty()) {
       throw new EmptyException(ProductErrorMessage.EMPTY);
@@ -190,76 +188,6 @@ public class ProductServiceImp implements ProductService {
       response.add(productResponse);
     }
 
-    return response;
-  }
-
-  @Override
-  public ListProductResponse<BrandResponse, ProductByBrandResponse> getProductByBrand(int brandId, int pageNo,
-      int pageSize, String sortBy, boolean isAscending) {
-
-    Brand brand = brandRepository.findById(brandId).orElseThrow(() -> new ErrorException(BrandErrorMessage.NOT_FOUND));
-
-    Page<Product> products = null;
-
-    // if (isAscending) {
-    //   products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
-    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
-    // } else {
-    //   products = productRepository.findAllByBrandAndStatus(brand, Status.ACTIVATED,
-    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
-    // }
-
-    if (products.isEmpty()) {
-      throw new EmptyException(ProductErrorMessage.EMPTY);
-    }
-
-    ListProductResponse<BrandResponse, ProductByBrandResponse> response = new ListProductResponse<BrandResponse, ProductByBrandResponse>();
-    BrandResponse brandResponse = modelMapper.map(brand, BrandResponse.class);
-    response.setDetails(brandResponse);
-    List<ProductByBrandResponse> listByBrand = new ArrayList<ProductByBrandResponse>();
-    for (Product product : products) {
-      ProductResponse productResponse = Utils.convertProduct(product);
-      ProductByBrandResponse productByBrandResponse = modelMapper.map(productResponse, ProductByBrandResponse.class);
-      listByBrand.add(productByBrandResponse);
-    }
-
-    response.setProducts(listByBrand);
-    return response;
-  }
-
-  @Override
-  public ListProductResponse<CategoryResponse, ProductByCategoryResponse> getProductByCategory(int categoryId,
-      int pageNo, int pageSize, String sortBy, boolean isAscending) {
-
-    Category category = categoryRepository.findById(categoryId)
-        .orElseThrow(() -> new ErrorException(CategoryErrorMessage.CATEGORY_NOT_FOUND));
-
-    Page<Product> products = null;
-
-    // if (isAscending) {
-    //   products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
-    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).ascending()));
-    // } else {
-    //   products = productRepository.findAllByCategoryAndStatus(category, Status.ACTIVATED,
-    //       PageRequest.of(pageNo, pageSize, Sort.by(sortBy).descending()));
-    // }
-
-    if (products.isEmpty()) {
-      throw new EmptyException(ProductErrorMessage.EMPTY);
-    }
-
-    ListProductResponse<CategoryResponse, ProductByCategoryResponse> response = new ListProductResponse<CategoryResponse, ProductByCategoryResponse>();
-    CategoryResponse categoryResponse = modelMapper.map(category, CategoryResponse.class);
-    response.setDetails(categoryResponse);
-    List<ProductByCategoryResponse> listByCategory = new ArrayList<ProductByCategoryResponse>();
-    for (Product product : products) {
-      ProductResponse productResponse = Utils.convertProduct(product);
-      ProductByCategoryResponse productByCategoryResponse = modelMapper.map(productResponse,
-          ProductByCategoryResponse.class);
-      listByCategory.add(productByCategoryResponse);
-    }
-
-    response.setProducts(listByCategory);
     return response;
   }
 
@@ -289,6 +217,10 @@ public class ProductServiceImp implements ProductService {
     product.setPrice(request.getPrice());
     product.setQuantity(request.getQuantity());
     product.setCategoryBrand(categoryBrand);
+    product.setEffect(request.getEffect());
+    product.setIngredient(request.getIngredient());
+    product.setInstructionManual(request.getInstructionManual());
+    product.setProductSpecifications(request.getProductSpecifications());
 
     Product productSaved = productRepository.save(product);
     ProductResponse response = Utils.convertProduct(productSaved);

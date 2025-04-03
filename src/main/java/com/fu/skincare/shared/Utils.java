@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.crypto.SecretKey;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 
@@ -22,6 +23,7 @@ import com.fu.skincare.entity.BillHistory;
 import com.fu.skincare.entity.Product;
 import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.jwt.JwtConfig;
+import com.fu.skincare.repository.ProductRepository;
 import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.brand.BrandResponse;
@@ -39,6 +41,12 @@ import lombok.experimental.FieldDefaults;
 public class Utils {
 
   private static final ModelMapper modelMapper = new ModelMapper();
+  private static ProductRepository productRepository;
+
+  @Autowired
+  public void setProductRepository(ProductRepository productRepo) {
+    productRepository = productRepo;
+  }
 
   public static String formatVNDatetimeNow() {
     ZoneId vietnamZoneId = ZoneId.of("Asia/Ho_Chi_Minh");
@@ -80,6 +88,8 @@ public class Utils {
       }
       response.setSuitableFor(names);
     }
+    int noOfSold  = productRepository.sumNoOfSoldByProductId(product.getId());
+    response.setNoOfSold(noOfSold);
     return response;
 
   }

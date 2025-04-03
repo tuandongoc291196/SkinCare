@@ -24,11 +24,6 @@ import com.fu.skincare.request.product.ProductFilterRequest;
 import com.fu.skincare.request.product.UpdateProductRequest;
 import com.fu.skincare.response.ListResponseDTO;
 import com.fu.skincare.response.ResponseDTO;
-import com.fu.skincare.response.brand.BrandResponse;
-import com.fu.skincare.response.category.CategoryResponse;
-import com.fu.skincare.response.product.ListProductResponse;
-import com.fu.skincare.response.product.ProductByBrandResponse;
-import com.fu.skincare.response.product.ProductByCategoryResponse;
 import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.service.ProductService;
 
@@ -63,37 +58,6 @@ public class ProductController {
     List<ProductResponse> data = productService.getAllProduct(pageNo, pageSize, sortBy, isAscending);
     responseDTO.setData(data);
     responseDTO.setMessage(ProductSuccessMessage.GET_ALL_SUCCESS);
-    responseDTO.setStatus(Status.SUCCESS);
-    return ResponseEntity.ok().body(responseDTO);
-  }
-
-  @GetMapping("/getAllByBrands")
-  public ResponseEntity<?> getAllByBrands(@RequestParam(defaultValue = "0") int brandId,
-      @RequestParam(defaultValue = "0") int pageNo,
-      @RequestParam(defaultValue = "10") int pageSize,
-      @RequestParam(defaultValue = "id") String sortBy,
-      @RequestParam(defaultValue = "true") boolean isAscending) {
-    ResponseDTO<ListProductResponse<BrandResponse, ProductByBrandResponse>> responseDTO = new ResponseDTO<ListProductResponse<BrandResponse, ProductByBrandResponse>>();
-    ListProductResponse<BrandResponse, ProductByBrandResponse> data = productService.getProductByBrand(brandId, pageNo,
-        pageSize, sortBy, isAscending);
-    responseDTO.setData(data);
-    responseDTO.setMessage(ProductSuccessMessage.GET_BY_BRAND_SUCCESS);
-    responseDTO.setStatus(Status.SUCCESS);
-    return ResponseEntity.ok().body(responseDTO);
-  }
-
-  @GetMapping("/getAllByCategory")
-  public ResponseEntity<?> getAllByCategory(@RequestParam(defaultValue = "0") int categoryId,
-      @RequestParam(defaultValue = "0") int pageNo,
-      @RequestParam(defaultValue = "10") int pageSize,
-      @RequestParam(defaultValue = "id") String sortBy,
-      @RequestParam(defaultValue = "true") boolean isAscending) {
-    ResponseDTO<ListProductResponse<CategoryResponse, ProductByCategoryResponse>> responseDTO = new ResponseDTO<ListProductResponse<CategoryResponse, ProductByCategoryResponse>>();
-    ListProductResponse<CategoryResponse, ProductByCategoryResponse> data = productService.getProductByCategory(
-        categoryId, pageNo,
-        pageSize, sortBy, isAscending);
-    responseDTO.setData(data);
-    responseDTO.setMessage(ProductSuccessMessage.GET_BY_CATEGORY_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);
     return ResponseEntity.ok().body(responseDTO);
   }

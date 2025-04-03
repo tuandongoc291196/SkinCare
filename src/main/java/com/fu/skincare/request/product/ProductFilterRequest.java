@@ -17,6 +17,7 @@ public class ProductFilterRequest {
   private String name;
   private int brandId;
   private int categoryId;
+  private int skinTypeId;
   private int minPrice;
   private int maxPrice;
 
