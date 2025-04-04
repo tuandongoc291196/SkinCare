@@ -59,7 +59,7 @@ public class BillServiceImp implements BillService {
     for (CreateOrderDetailRequest createOrderDetailRequest : request.getListProducts()) {
       OrderDetail orderDetail = orderDetailService.createOrderDetail(createOrderDetailRequest);
       listOrderDetails.add(orderDetail);
-      totalPrice += orderDetail.getPrice();
+      totalPrice += (orderDetail.getPrice() * orderDetail.getQuantity());
     }
     totalPrice += 25000;
     Bill bill = Bill.builder()

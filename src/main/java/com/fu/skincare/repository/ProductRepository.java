@@ -28,16 +28,15 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
       "    AND (cb.brand_id = COALESCE(NULLIF(:brandId, 0), cb.brand_id))\n" + //
       "    AND (cb.category_id = COALESCE(NULLIF(:categoryId, 0), cb.category_id))\n" + //
       "    AND (pst.skin_type_id = COALESCE(NULLIF(:skinTypeId, 0), pst.skin_type_id))\n" + //
-      "    AND p.status = 'ACTIVATED'\n" + 
-      "    order by p.id desc;"
-      , nativeQuery = true)
+      "    AND p.status = 'ACTIVATED'\n" +
+      "    order by p.id desc;", nativeQuery = true)
   List<Product> filterProduct(String name, int minPrice, int maxPrice, int brandId, int categoryId, int skinTypeId);
 
-  @Query(value = "SELECT COALESCE(SUM(od.quantity), 0) AS noOfSold\n" + //
-      "            FROM product p \n" + //
-      "            LEFT JOIN order_detail od ON od.product_id = p.id \n" + //
-      "\tJOIN category_brand cb on p.category_brand_id = cb.id \n" + //
-      "    where p.id = :productId ", nativeQuery = true)
+  @Query(value = "SELECT COALESCE(SUM(od.quantity), 0) AS noOfSold \n" + //
+      "   FROM db_skin_care.order_detail od\n" + //
+      "       join product_detail pd on od.product_detail_id  = pd.id\n" + //
+      "   WHERE pd.product_id = :productId\n" + //
+      "     And od.status not like 'CANCELED' and od.status not like 'REJECTED'", nativeQuery = true)
   int sumNoOfSoldByProductId(int productId);
 
 }

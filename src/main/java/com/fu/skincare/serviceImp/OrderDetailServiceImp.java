@@ -40,7 +40,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
     OrderDetail orderDetail = OrderDetail.builder()
         .productDetail(product)
         .quantity(request.getQuantity())
-        .price(request.getQuantity() * product.getPrice())
+        .price(product.getPrice())
         .status(Status.ACTIVATED)
         .createAt(Utils.formatVNDatetimeNow())
         .build();

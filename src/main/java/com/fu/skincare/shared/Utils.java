@@ -165,7 +165,7 @@ public class Utils {
     df.setGroupingUsed(true);
     df.setGroupingSize(3);
 
-    String formatted = df.format(price) + " ₫";
+    String formatted = df.format(price) + "₫";
     return formatted;
   }
 
