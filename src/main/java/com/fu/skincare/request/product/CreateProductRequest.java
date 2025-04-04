@@ -2,7 +2,6 @@ package com.fu.skincare.request.product;
 
 import java.util.List;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 import lombok.AllArgsConstructor;
@@ -24,10 +23,6 @@ public class CreateProductRequest {
   @NotBlank
   private String description;
   private String image;
-  @Min(value = 0, message = "Price must be greater than 0")
-  private int price;
-  @Min(value = 0, message = "Quantity must be greater than 0")
-  private int quantity;
   private int categoryId;
   private String ingredient;
   private String effect;
@@ -35,5 +30,6 @@ public class CreateProductRequest {
   private String productSpecifications;
   private int brandId;
   private int accountId;
+  private List<CreateProductDetailRequest> productDetails;
   private List<Integer> skinTypeId;
 }

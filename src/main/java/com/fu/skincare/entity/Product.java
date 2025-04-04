@@ -51,8 +51,6 @@ public class Product {
   private String instructionManual;
   @Column(columnDefinition = "TEXT")
   private String productSpecifications;
-  private int price;
-  private int quantity;
   private String status;
   private String createdAt;
 
@@ -69,12 +67,12 @@ public class Product {
   @EqualsAndHashCode.Include
   @ToString.Include
   private CategoryBrand categoryBrand;
-  
+
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
   @EqualsAndHashCode.Include
   @ToString.Include
   @JsonIgnore
-  private Collection<OrderDetail> orderDetails;
+  private Collection<ProductDetail> productDetails;
 
   @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
   @EqualsAndHashCode.Include

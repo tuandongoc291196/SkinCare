@@ -1,5 +1,8 @@
 package com.fu.skincare.response.product;
 
+import java.util.List;
+
+import com.fu.skincare.entity.ProductDetail;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
 
@@ -25,8 +28,7 @@ public class ProductResponse {
   private String instructionManual;
   private String productSpecifications;
   private String image;
-  private int price;
-  private int quantity;
+  private String priceRange;
   private int noOfSold;
   private String status;
   private String createdAt;
@@ -34,4 +36,5 @@ public class ProductResponse {
   private BrandResponse brand;
   private String createdBy;
   private String suitableFor;
+  private List<ProductDetail> productDetails;
 }

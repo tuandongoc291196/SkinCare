@@ -16,7 +16,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrderDetailRequest {
-  private int productId;
+  private int productDetailId;
   @Min(value = 0, message = "Price must be greater than 0")
   private int quantity;
 }

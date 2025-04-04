@@ -1,6 +1,6 @@
 package com.fu.skincare.response.orderDetail;
 
-import com.fu.skincare.response.product.ProductResponse;
+import com.fu.skincare.response.product.ProductDetailResponseByOrder;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +21,5 @@ public class OrderDetailResponse {
   private int quantity;
   private String status;
   private int price;
-  private ProductResponse productResponse;
+  private ProductDetailResponseByOrder productDetailResponse;
 }

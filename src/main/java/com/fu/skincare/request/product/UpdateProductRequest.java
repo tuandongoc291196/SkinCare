@@ -32,5 +32,6 @@ public class UpdateProductRequest {
   private int quantity;
   private int categoryId;
   private int brandId;
-  public List<Integer> skinTypeIds;
+  private List<Integer> skinTypeIds;
+  private List<UpdateProductDetailRequest> productDetails;
 }

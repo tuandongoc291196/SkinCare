@@ -44,8 +44,8 @@ public class OrderDetail {
 
   @ManyToOne(fetch = FetchType.LAZY)
   @Fetch(FetchMode.JOIN)
-  @JoinColumn(name = "productId")
+  @JoinColumn(name = "productDetailId")
   @EqualsAndHashCode.Include
   @ToString.Include
-  private Product product;
+  private ProductDetail productDetail;
 }

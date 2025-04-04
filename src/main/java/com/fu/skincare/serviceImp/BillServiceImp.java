@@ -30,7 +30,7 @@ import com.fu.skincare.response.account.AccountResponse;
 import com.fu.skincare.response.bill.BillByAccountResponse;
 import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
-import com.fu.skincare.response.product.ProductResponse;
+import com.fu.skincare.response.product.ProductDetailResponseByOrder;
 import com.fu.skincare.service.BillService;
 import com.fu.skincare.service.OrderDetailService;
 import com.fu.skincare.service.ProductService;
@@ -77,9 +77,9 @@ public class BillServiceImp implements BillService {
     listOrderDetails.forEach(orderDetail -> {
       orderDetail.setBill(billSaved);
       OrderDetail orderDetailSaved = orderDetailRepository.save(orderDetail);
-      ProductResponse productResponse = Utils.convertProduct(orderDetailSaved.getProduct());
+      ProductDetailResponseByOrder productResponse = Utils.convertToProductDetailResponseByOrder(orderDetailSaved.getProductDetail());
       OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetailSaved, OrderDetailResponse.class);
-      orderDetailResponse.setProductResponse(productResponse);
+      orderDetailResponse.setProductDetailResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
     BillHistory billHistory = BillHistory.builder()
@@ -184,8 +184,8 @@ public class BillServiceImp implements BillService {
 
     for (OrderDetail orderDetail : bill.getOrderDetails()) {
       if (orderDetail.getStatus().equals(Status.APPROVED)) {
-        productService.updateProductQuantity(orderDetail.getProduct().getId(),
-            orderDetail.getProduct().getQuantity() + orderDetail.getQuantity());
+        productService.updateProductQuantity(orderDetail.getProductDetail().getId(),
+            orderDetail.getProductDetail().getQuantity() + orderDetail.getQuantity());
       }
       orderDetail.setStatus(Status.CANCELED);
       orderDetailRepository.save(orderDetail);
@@ -232,7 +232,7 @@ public class BillServiceImp implements BillService {
     }
 
     for (OrderDetail orderDetail : bill.getOrderDetails()) {
-      if (orderDetail.getProduct().getQuantity() < orderDetail.getQuantity()) {
+      if (orderDetail.getProductDetail().getQuantity() < orderDetail.getQuantity()) {
         throw new ErrorException(ProductErrorMessage.NOT_ENOUGH);
       }
     }
@@ -249,8 +249,8 @@ public class BillServiceImp implements BillService {
     billHistoryRepository.save(billHistory);
 
     for (OrderDetail orderDetail : bill.getOrderDetails()) {
-      productService.updateProductQuantity(orderDetail.getProduct().getId(),
-          orderDetail.getProduct().getQuantity() - orderDetail.getQuantity());
+      productService.updateProductQuantity(orderDetail.getProductDetail().getId(),
+          orderDetail.getProductDetail().getQuantity() - orderDetail.getQuantity());
       orderDetail.setStatus(Status.APPROVED);
       orderDetailRepository.save(orderDetail);
     }
@@ -286,4 +286,5 @@ public class BillServiceImp implements BillService {
     return Utils.convertBillResponse(bill);
   }
 
+  
 }

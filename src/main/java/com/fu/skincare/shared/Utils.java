@@ -1,5 +1,7 @@
 package com.fu.skincare.shared;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -21,6 +23,7 @@ import com.fu.skincare.entity.Account;
 import com.fu.skincare.entity.Bill;
 import com.fu.skincare.entity.BillHistory;
 import com.fu.skincare.entity.Product;
+import com.fu.skincare.entity.ProductDetail;
 import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.jwt.JwtConfig;
 import com.fu.skincare.repository.ProductRepository;
@@ -29,6 +32,7 @@ import com.fu.skincare.response.bill.BillResponse;
 import com.fu.skincare.response.brand.BrandResponse;
 import com.fu.skincare.response.category.CategoryResponse;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
+import com.fu.skincare.response.product.ProductDetailResponseByOrder;
 import com.fu.skincare.response.product.ProductResponse;
 
 import io.jsonwebtoken.Jwts;
@@ -88,7 +92,25 @@ public class Utils {
       }
       response.setSuitableFor(names);
     }
-    int noOfSold  = productRepository.sumNoOfSoldByProductId(product.getId());
+    if (product.getProductDetails().size() > 0) {
+      {
+        int minPrice = product.getProductDetails().stream()
+            .mapToInt(ProductDetail::getPrice)
+            .min()
+            .orElse(0); // Default if list is empty (shouldn't happen here)
+
+        int maxPrice = product.getProductDetails().stream()
+            .mapToInt(ProductDetail::getPrice)
+            .max()
+            .orElse(0); // Default if list is empty
+        if (minPrice == maxPrice) {
+          response.setPriceRange(convertToVNDFormat(minPrice));
+        } else {
+          response.setPriceRange(convertToVNDFormat(minPrice) + " - " + convertToVNDFormat(maxPrice));
+        }
+      }
+    }
+    int noOfSold = productRepository.sumNoOfSoldByProductId(product.getId());
     response.setNoOfSold(noOfSold);
     return response;
 
@@ -97,9 +119,27 @@ public class Utils {
   public static BillResponse convertBillResponse(Bill bill) {
     List<OrderDetailResponse> listOrderDetailResponse = new ArrayList<>();
     bill.getOrderDetails().forEach(orderDetail -> {
-      ProductResponse productResponse = Utils.convertProduct(orderDetail.getProduct());
+
+      ProductDetailResponseByOrder productResponse = ProductDetailResponseByOrder.builder()
+          .id(orderDetail.getProductDetail().getId())
+          .name(orderDetail.getProductDetail().getProduct().getName())
+          .description(orderDetail.getProductDetail().getProduct().getDescription())
+          .ingredient(orderDetail.getProductDetail().getProduct().getIngredient())
+          .effect(orderDetail.getProductDetail().getProduct().getEffect())
+          .instructionManual(orderDetail.getProductDetail().getProduct().getInstructionManual())
+          .productSpecifications(orderDetail.getProductDetail().getProduct().getProductSpecifications())
+          .image(orderDetail.getProductDetail().getProduct().getImage())
+          .price(orderDetail.getProductDetail().getPrice())
+          .status(orderDetail.getProductDetail().getProduct().getStatus())
+          .capacity(orderDetail.getProductDetail().getCapacity())
+          .createdAt(orderDetail.getProductDetail().getCreatedAt())
+          .category(modelMapper.map(orderDetail.getProductDetail().getProduct().getCategoryBrand().getCategory(),
+              CategoryResponse.class))
+          .brand(modelMapper.map(orderDetail.getProductDetail().getProduct().getCategoryBrand().getBrand(),
+              BrandResponse.class))
+          .build();
       OrderDetailResponse orderDetailResponse = modelMapper.map(orderDetail, OrderDetailResponse.class);
-      orderDetailResponse.setProductResponse(productResponse);
+      orderDetailResponse.setProductDetailResponse(productResponse);
       listOrderDetailResponse.add(orderDetailResponse);
     });
     BillResponse billResponse = modelMapper.map(bill, BillResponse.class);
@@ -114,5 +154,40 @@ public class Utils {
     billResponse.setAccount(accountResponse);
     billResponse.setListProducts(listOrderDetailResponse);
     return billResponse;
+  }
+
+  public static String convertToVNDFormat(int price) {
+    DecimalFormat df = new DecimalFormat("#,###");
+    DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+
+    symbols.setGroupingSeparator('.'); // Vietnamese style (1.000.000.000)
+    df.setDecimalFormatSymbols(symbols);
+    df.setGroupingUsed(true);
+    df.setGroupingSize(3);
+
+    String formatted = df.format(price) + " ₫";
+    return formatted;
+  }
+
+  public static ProductDetailResponseByOrder convertToProductDetailResponseByOrder(ProductDetail productDetail) {
+    ProductDetailResponseByOrder response = ProductDetailResponseByOrder.builder()
+        .id(productDetail.getId())
+        .name(productDetail.getProduct().getName())
+        .description(productDetail.getProduct().getDescription())
+        .ingredient(productDetail.getProduct().getIngredient())
+        .effect(productDetail.getProduct().getEffect())
+        .instructionManual(productDetail.getProduct().getInstructionManual())
+        .productSpecifications(productDetail.getProduct().getProductSpecifications())
+        .image(productDetail.getProduct().getImage())
+        .price(productDetail.getPrice())
+        .status(productDetail.getProduct().getStatus())
+        .capacity(productDetail.getCapacity())
+        .createdAt(productDetail.getCreatedAt())
+        .category(modelMapper.map(productDetail.getProduct().getCategoryBrand().getCategory(),
+            CategoryResponse.class))
+        .brand(modelMapper.map(productDetail.getProduct().getCategoryBrand().getBrand(),
+            BrandResponse.class))
+        .build();
+    return response;
   }
 }

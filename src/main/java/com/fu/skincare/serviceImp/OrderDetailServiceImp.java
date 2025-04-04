@@ -7,13 +7,13 @@ import com.fu.skincare.constants.Status;
 import com.fu.skincare.constants.message.orderDetail.OrderDetailErrorMessage;
 import com.fu.skincare.constants.message.product.ProductErrorMessage;
 import com.fu.skincare.entity.OrderDetail;
-import com.fu.skincare.entity.Product;
+import com.fu.skincare.entity.ProductDetail;
 import com.fu.skincare.exception.ErrorException;
 import com.fu.skincare.repository.OrderDetailRepository;
-import com.fu.skincare.repository.ProductRepository;
+import com.fu.skincare.repository.ProductDetailRepostory;
 import com.fu.skincare.request.orderDetail.CreateOrderDetailRequest;
 import com.fu.skincare.response.orderDetail.OrderDetailResponse;
-import com.fu.skincare.response.product.ProductResponse;
+import com.fu.skincare.response.product.ProductDetailResponseByOrder;
 import com.fu.skincare.service.OrderDetailService;
 import com.fu.skincare.shared.Utils;
 
@@ -24,13 +24,13 @@ import lombok.RequiredArgsConstructor;
 public class OrderDetailServiceImp implements OrderDetailService {
 
   private final OrderDetailRepository orderDetailRepository;
-  private final ProductRepository productRepository;
+  private final ProductDetailRepostory productDetailRepository;
   private final ModelMapper modelMapper;
 
   @Override
   public OrderDetail createOrderDetail(CreateOrderDetailRequest request) {
 
-    Product product = productRepository.findById(request.getProductId())
+    ProductDetail product = productDetailRepository.findById(request.getProductDetailId())
         .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
 
     if (product.getQuantity() < request.getQuantity()) {
@@ -38,7 +38,7 @@ public class OrderDetailServiceImp implements OrderDetailService {
     }
 
     OrderDetail orderDetail = OrderDetail.builder()
-        .product(product)
+        .productDetail(product)
         .quantity(request.getQuantity())
         .price(request.getQuantity() * product.getPrice())
         .status(Status.ACTIVATED)
@@ -56,9 +56,9 @@ public class OrderDetailServiceImp implements OrderDetailService {
 
     OrderDetailResponse response = modelMapper.map(orderDetail, OrderDetailResponse.class);
 
-    ProductResponse productResponse = Utils.convertProduct(orderDetail.getProduct());
+    ProductDetailResponseByOrder productResponse = Utils.convertToProductDetailResponseByOrder(orderDetail.getProductDetail());
 
-    response.setProductResponse(productResponse);
+    response.setProductDetailResponse(productResponse);
     return response;
   }
 

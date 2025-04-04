@@ -21,6 +21,7 @@ import com.fu.skincare.entity.Brand;
 import com.fu.skincare.entity.Category;
 import com.fu.skincare.entity.CategoryBrand;
 import com.fu.skincare.entity.Product;
+import com.fu.skincare.entity.ProductDetail;
 import com.fu.skincare.entity.ProductSkinType;
 import com.fu.skincare.entity.SkinType;
 import com.fu.skincare.exception.EmptyException;
@@ -29,11 +30,14 @@ import com.fu.skincare.repository.AccountRepository;
 import com.fu.skincare.repository.BrandRepository;
 import com.fu.skincare.repository.CategoryBrandRepository;
 import com.fu.skincare.repository.CategoryRepository;
+import com.fu.skincare.repository.ProductDetailRepostory;
 import com.fu.skincare.repository.ProductRepository;
 import com.fu.skincare.repository.ProductSkinTypeRepository;
 import com.fu.skincare.repository.SkinTypeRepository;
+import com.fu.skincare.request.product.CreateProductDetailRequest;
 import com.fu.skincare.request.product.CreateProductRequest;
 import com.fu.skincare.request.product.ProductFilterRequest;
+import com.fu.skincare.request.product.UpdateProductDetailRequest;
 import com.fu.skincare.request.product.UpdateProductRequest;
 import com.fu.skincare.response.product.ProductResponse;
 import com.fu.skincare.service.ProductService;
@@ -49,6 +53,7 @@ public class ProductServiceImp implements ProductService {
   private final BrandRepository brandRepository;
   private final CategoryRepository categoryRepository;
   private final AccountRepository accountRepository;
+  private final ProductDetailRepostory productDetailRepostory;
   // private final ModelMapper modelMapper;
   private final SkinTypeRepository skinTypeRepository;
   private final ProductSkinTypeRepository productSkinTypeRepository;
@@ -91,8 +96,6 @@ public class ProductServiceImp implements ProductService {
         .name(request.getName())
         .description(request.getDescription())
         .image(request.getImage())
-        .price(request.getPrice())
-        .quantity(request.getQuantity())
         .categoryBrand(categoryBrand)
         .effect(request.getEffect())
         .ingredient(request.getIngredient())
@@ -105,6 +108,22 @@ public class ProductServiceImp implements ProductService {
         .build();
 
     Product productSaved = productRepository.save(product);
+    List<ProductDetail> listProductDetail = new ArrayList<ProductDetail>();
+    for (CreateProductDetailRequest productDetailRequest : request.getProductDetails()) {
+      ProductDetail productDetail = ProductDetail.builder()
+          .product(productSaved)
+          .price(productDetailRequest.getPrice())
+          .quantity(productDetailRequest.getQuantity())
+          .capacity(productDetailRequest.getCapacity())
+          .createdAt(Utils.formatVNDatetimeNow())
+          .status(Status.ACTIVATED)
+          .build();
+
+      ProductDetail productDetailSaved = productDetailRepostory.save(productDetail);
+      listProductDetail.add(productDetailSaved);
+    }
+
+    productSaved.setProductDetails(listProductDetail);
 
     List<ProductSkinType> listProductSkinType = new ArrayList<ProductSkinType>();
     if (!listSkinType.isEmpty()) {
@@ -214,27 +233,41 @@ public class ProductServiceImp implements ProductService {
     product.setName(request.getName());
     product.setDescription(request.getDescription());
     product.setImage(request.getImage());
-    product.setPrice(request.getPrice());
-    product.setQuantity(request.getQuantity());
     product.setCategoryBrand(categoryBrand);
     product.setEffect(request.getEffect());
     product.setIngredient(request.getIngredient());
     product.setInstructionManual(request.getInstructionManual());
     product.setProductSpecifications(request.getProductSpecifications());
+    List<ProductDetail> listProductDetail = new ArrayList<ProductDetail>();
+    for (UpdateProductDetailRequest productDetailRequest : request.getProductDetails()) {
+      ProductDetail productDetail = productDetailRepostory.findById(productDetailRequest.getId())
+          .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
+
+      if (productDetail.getProduct().getId() != product.getId()) {
+        throw new ErrorException(ProductErrorMessage.INVALID_PRODUCT);
+      }
+
+      productDetail.setPrice(productDetailRequest.getPrice());
+      productDetail.setQuantity(productDetailRequest.getQuantity());
+      productDetail.setCapacity(productDetailRequest.getCapacity());
+      ProductDetail productDetailSaved = productDetailRepostory.save(productDetail);
+      listProductDetail.add(productDetailSaved);
+    }
 
     Product productSaved = productRepository.save(product);
+    productSaved.setProductDetails(listProductDetail);
     ProductResponse response = Utils.convertProduct(productSaved);
     return response;
 
   }
 
   @Override
-  public ProductResponse updateProductQuantity(int productId, int quantity) {
-    Product product = productRepository.findById(productId)
+  public ProductResponse updateProductQuantity(int productDetailId, int quantity) {
+    ProductDetail productDetail = productDetailRepostory.findById(productDetailId)
         .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
-    product.setQuantity(quantity);
-    Product productSaved = productRepository.save(product);
-    ProductResponse response = Utils.convertProduct(productSaved);
+    productDetail.setQuantity(quantity);
+    ProductDetail productDetailSaved = productDetailRepostory.save(productDetail);
+    ProductResponse response = Utils.convertProduct(productDetailSaved.getProduct());
     return response;
   }
 
