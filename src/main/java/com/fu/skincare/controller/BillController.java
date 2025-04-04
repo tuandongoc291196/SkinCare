@@ -80,9 +80,9 @@ public class BillController {
 
   @PutMapping("/done/")
   @PreAuthorize(RolePreAuthorize.ROLE_ADMIN_STAFF)
-  public ResponseEntity<?> doneBill(@RequestParam int id) {
+  public ResponseEntity<?> doneBill(@RequestParam int id, @RequestParam String reason) {
     ResponseDTO<BillResponse> responseDTO = new ResponseDTO<>();
-    BillResponse data = billService.doneBill(id);
+    BillResponse data = billService.doneBill(id, reason);
     responseDTO.setData(data);
     responseDTO.setMessage(BillSuccessMessage.DONE_BILL_SUCCESS);
     responseDTO.setStatus(Status.SUCCESS);

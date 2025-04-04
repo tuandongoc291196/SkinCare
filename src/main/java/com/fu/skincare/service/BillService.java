@@ -17,7 +17,7 @@ public interface BillService {
 
   public BillResponse approvedBill(int id);
 
-  public BillResponse doneBill(int id);
+  public BillResponse doneBill(int id, String reason);
 
   public List<BillResponse> getAll(int pageNo, int pageSize, String sortBy, boolean isAscending);
 

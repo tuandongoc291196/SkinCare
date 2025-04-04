@@ -259,7 +259,7 @@ public class BillServiceImp implements BillService {
   }
 
   @Override
-  public BillResponse doneBill(int id) {
+  public BillResponse doneBill(int id, String reason) {
     Bill bill = billRepository.findById(id).orElseThrow(
         () -> new ErrorException(BillErrorMessage.NOT_FOUND));
 
@@ -272,7 +272,7 @@ public class BillServiceImp implements BillService {
     BillHistory billHistory = BillHistory.builder()
         .bill(bill)
         .status(Status.DONE)
-        .description(BillHistorySuccessMessage.DONE)
+        .description(reason)
         .createAt(Utils.formatVNDatetimeNow())
         .build();
 

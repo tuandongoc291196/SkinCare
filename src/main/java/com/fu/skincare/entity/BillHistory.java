@@ -1,5 +1,6 @@
 package com.fu.skincare.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -33,6 +34,7 @@ public class BillHistory {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private int id;
   private String createAt;
+  @Column(columnDefinition = "TEXT")
   private String description;
   private String status;
 
