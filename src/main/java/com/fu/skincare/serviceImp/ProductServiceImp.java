@@ -286,7 +286,10 @@ public class ProductServiceImp implements ProductService {
   public ProductResponse updateProductStatus(int productId, String status) {
     Product product = productRepository.findById(productId)
         .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
-
+    product.getProductDetails().forEach(productDetail -> {
+      productDetail.setStatus(status);
+      productDetailRepostory.save(productDetail);
+    });
     product.setStatus(status);
     productRepository.save(product);
     return Utils.convertProduct(product);
