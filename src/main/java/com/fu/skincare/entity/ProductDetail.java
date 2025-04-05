@@ -46,12 +46,11 @@ public class ProductDetail {
     @Fetch(FetchMode.JOIN)
     @JoinColumn(name = "productId")
     @EqualsAndHashCode.Include
-    @ToString.Include
+    @JsonIgnore
     private Product product;
 
     @OneToMany(mappedBy = "productDetail", cascade = CascadeType.ALL)
     @EqualsAndHashCode.Include
-    @ToString.Include
     @JsonIgnore
     private Collection<OrderDetail> orderDetails;
 }

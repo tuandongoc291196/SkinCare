@@ -14,21 +14,24 @@ import com.fu.skincare.entity.Product;
 public interface ProductRepository extends JpaRepository<Product, Integer> {
   Page<Product> findAllByStatus(String status, Pageable pageable);
 
-  @Query(value = "SELECT p.*\n" + //
+  @Query(value = "SELECT distinct p.*\n" + //
       "FROM \n" + //
       "    product p\n" + //
       "JOIN \n" + //
       "    category_brand cb ON p.category_brand_id = cb.id\n" + //
       "JOIN\n" + //
       "    product_skin_type pst ON p.id = pst.product_id\n" + //
+      "JOIN\n" + //
+      "    product_detail pd ON p.id = pd.product_id\n" + //
       "WHERE \n" + //
       "    (UPPER(p.name) LIKE CONCAT('%', UPPER(COALESCE(NULLIF(:name, ''), '')), '%'))\n" + //
-      "    AND (p.price >= COALESCE(NULLIF(:minPrice, 0), 0))\n" + //
-      "    AND (p.price <= COALESCE(NULLIF(:maxPrice, 0), 2147483647))\n" + //
+      "    AND (pd.price >= COALESCE(NULLIF(:minPrice, 0), 0))\n" + //
+      "    AND (pd.price <= COALESCE(NULLIF(:maxPrice, 0), 2147483647))\n" + //
       "    AND (cb.brand_id = COALESCE(NULLIF(:brandId, 0), cb.brand_id))\n" + //
       "    AND (cb.category_id = COALESCE(NULLIF(:categoryId, 0), cb.category_id))\n" + //
       "    AND (pst.skin_type_id = COALESCE(NULLIF(:skinTypeId, 0), pst.skin_type_id))\n" + //
       "    AND p.status = 'ACTIVATED'\n" +
+      "    AND pd.status = 'ACTIVATED'\n" +
       "    order by p.id desc;", nativeQuery = true)
   List<Product> filterProduct(String name, int minPrice, int maxPrice, int brandId, int categoryId, int skinTypeId);
 
