@@ -2,6 +2,7 @@ package com.fu.skincare.serviceImp;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -240,22 +241,32 @@ public class ProductServiceImp implements ProductService {
     product.setProductSpecifications(request.getProductSpecifications());
     List<ProductDetail> listProductDetail = new ArrayList<ProductDetail>();
     for (UpdateProductDetailRequest productDetailRequest : request.getProductDetails()) {
-      ProductDetail productDetail = productDetailRepostory.findById(productDetailRequest.getId())
-          .orElseThrow(() -> new ErrorException(ProductErrorMessage.NOT_FOUND));
+      Optional<ProductDetail> productDetail = productDetailRepostory.findById(productDetailRequest.getId());
 
-      if (productDetail.getProduct().getId() != product.getId()) {
-        throw new ErrorException(ProductErrorMessage.INVALID_PRODUCT);
+      if (productDetail.isEmpty()) {
+        ProductDetail newProductDetail = ProductDetail.builder()
+            .product(product)
+            .price(productDetailRequest.getPrice())
+            .quantity(productDetailRequest.getQuantity())
+            .capacity(productDetailRequest.getCapacity())
+            .createdAt(Utils.formatVNDatetimeNow())
+            .status(Status.ACTIVATED)
+            .build();
+        ProductDetail productDetailSaved = productDetailRepostory.save(newProductDetail);
+        listProductDetail.add(productDetailSaved);
+      } else {
+        if (productDetail.get().getProduct().getId() != product.getId()) {
+          throw new ErrorException(ProductErrorMessage.INVALID_PRODUCT);
+        }
+        productDetail.get().setPrice(productDetailRequest.getPrice());
+        productDetail.get().setQuantity(productDetailRequest.getQuantity());
+        productDetail.get().setCapacity(productDetailRequest.getCapacity());
+        ProductDetail productDetailSaved = productDetailRepostory.save(productDetail.get());
+        listProductDetail.add(productDetailSaved);
       }
-
-      productDetail.setPrice(productDetailRequest.getPrice());
-      productDetail.setQuantity(productDetailRequest.getQuantity());
-      productDetail.setCapacity(productDetailRequest.getCapacity());
-      ProductDetail productDetailSaved = productDetailRepostory.save(productDetail);
-      listProductDetail.add(productDetailSaved);
     }
-
     Product productSaved = productRepository.save(product);
-    productSaved.setProductDetails(listProductDetail);
+    product.setProductDetails(listProductDetail);
     ProductResponse response = Utils.convertProduct(productSaved);
     return response;
 
