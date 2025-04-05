@@ -11,11 +11,12 @@ import com.fu.skincare.entity.OrderDetail;
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Integer> {
 
-    @Query(value = "SELECT p.id as id, p.name as name, SUM(od.quantity) AS quantity \n" + //
-            "FROM order_detail od \n" + //
-            "JOIN product p ON od.product_id = p.id \n" + //
-            "GROUP BY p.id, p.name \n" + //
-            "ORDER BY quantity DESC \n" + //
-            "LIMIT 5;", nativeQuery = true)
+    @Query(value = "select p.id, p.name, sum(od.quantity) as quantity\n" + //
+            "   from product p \n" + //
+            "       join product_detail pd on pd.product_id  = p.id\n" + //
+            "       join order_detail od on od.product_detail_id  = pd.id \n" + //
+            "   GROUP BY p.id, p.name \n" + //
+            "   ORDER BY quantity DESC \n" + //
+            "   LIMIT 5;", nativeQuery = true)
     public List<Object[]> getOrderDetailReport();
 }
