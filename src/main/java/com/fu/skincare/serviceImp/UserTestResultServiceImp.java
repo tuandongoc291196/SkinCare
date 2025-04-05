@@ -72,6 +72,7 @@ public class UserTestResultServiceImp implements UserTestResultService {
         UserTestResult userTestResultSaved = userTestResultRepository.save(userTestResult);
         List<UserTestResponse> userTestResponses = new ArrayList<>();
         int totalPoint = 0;
+        int maxPoint = 0;
         for (CreateUserTestRequest createUserTestRequest : request.getUserTests()) {
 
             Answer answer = answerRepository.findById(createUserTestRequest.getAnswerId()).orElseThrow(
@@ -89,10 +90,15 @@ public class UserTestResultServiceImp implements UserTestResultService {
 
             UserTest userTestSaved = userTestRepository.save(userTest);
             UserTestResponse userTestResponse = modelMapper.map(userTestSaved, UserTestResponse.class);
+            maxPoint += question.getAnswers().stream()
+                    .filter(a -> Status.ACTIVATED.equals(a.getStatus())) // filter active answers
+                    .mapToInt(Answer::getPoint)
+                    .max()
+                    .orElse(0);
             userTestResponses.add(userTestResponse);
             totalPoint += answer.getPoint();
         }
-
+        userTestResultSaved.setMaxPoint(maxPoint);
         userTestResultSaved.setTotalPoint(totalPoint);
 
         AccountResponse accountResponse = modelMapper.map(account, AccountResponse.class);

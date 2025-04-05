@@ -22,6 +22,7 @@ public class UserTestResultResponse {
     private int id;
     private String createdAt;
     private int totalPoint;
+    private int maxPoint;
     private int testTime;
     private String status;
     private List<UserTestResponse> userTestResponse;
