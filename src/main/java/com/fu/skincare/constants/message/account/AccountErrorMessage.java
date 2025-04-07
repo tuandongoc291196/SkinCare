@@ -8,4 +8,5 @@ public final class AccountErrorMessage {
   public static final String ACCOUNT_NOT_REGISTER = "Account is not register ";
   public static final String ACCOUNT_NOT_VERIFY = "Account is not verify ";
   public static final String ACCOUNT_NOT_PERMISSION = "Account not permission";
+  public static final String ACCOUNT_NOT_ACTIVE = "Account is not active ";
 }
