@@ -55,7 +55,7 @@ public class AuthServiceImp implements AuthService {
   public LoginReponseDTO login(LoginRequestDTO loginRequestDTO) {
     Account account = accountRepository.findAccountByEmail(loginRequestDTO.getEmail())
         .orElseThrow(() -> new ErrorException(AccountErrorMessage.ACCOUNT_NOT_REGISTER));
-    if (account.getStatus() != Status.ACTIVATED) {
+    if (!account.getStatus().equals(Status.ACTIVATED)) {
       throw new ErrorException(AccountErrorMessage.ACCOUNT_NOT_ACTIVE);
     }
     Authentication authentication = new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(),
